@@ -25,6 +25,9 @@ From [Ilum 2.0](https://github.com/ilum-cloud/ilum-core/releases/tag/ilum-2.0.0)
 #### Features
 
 - Spark Cluster management through API and web UI.
+- Flexible deployment.
+- Horizontally scalable.
+- Simple and lightweight.
 
 ```bash
 helm install --create-namespace -n <k8s-namespace> -f conf.yaml --set image=ilum:2.0.0 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
