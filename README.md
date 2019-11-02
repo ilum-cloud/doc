@@ -1,5 +1,5 @@
 <h1 align="center">
-  Ilum
+  <img src="logo.svg" width="224px"/><br/>
 </h1>
 
 > A fully manageable [Spark](https://github.com/apache/spark) cluster on [Kubernetes](https://github.com/kubernetes/kubernetes) with interactive sessions.
