@@ -35,6 +35,12 @@ From [Ilum 2.0](https://github.com/ilum-cloud/ilum-core/releases/tag/ilum-2.0.0)
 Ilum is supposed to be launched in a kubernetes environment.
 It requires MongoDB, Apache Kafka and ObjectStorage to be present and configured as well.
 
+### Prerequisites
+
+- [Check the `mongo/README.md`](mongo/README.md)
+- [Check the `kafka/README.md`](kafka/README.md)
+- [Check the `os/README.md`](os/README.md)
+
 ### 🐳 Quick start with docker and minikube
 
 If you don't want to install Ilum to your system, feel free to use it on minikube.
