@@ -44,7 +44,7 @@ It requires MongoDB, Apache Kafka and ObjectStorage to be present and configured
 The best way to start with ilum is to install it with [helm](https://helm.sh/)
 
 ```bash
-helm install --create-namespace -n <k8s-namespace> -f conf.yaml --set image=ilum:2.0.0 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
+helm install --create-namespace -n <k8s-namespace> -f conf.yaml --set image=ilum:3.1.1.4 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
 ```
 
 That's all you need to know to start! 🎉
@@ -95,7 +95,7 @@ Same as in normal deployment on kubernetes.
 ### ilum-core deployment
 
 ```bash
-helm install --create-namespace -n <k8s-namespace> -f conf.yaml --set image=ilum:2.0.0 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
+helm install --create-namespace -n <k8s-namespace> -f conf.yaml --set image=ilum:3.1.1.4 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
 ```
 
 ## Apache Spark job configuration
@@ -158,5 +158,28 @@ Then, these parameters should be added to default application config:
 To get rid of ivy configuration problems, add such parameter to default application config:
 ```shell
 "spark.driver.extraJavaOptions": "-Divy.cache.dir=/tmp -Divy.home=/tmp"
+```
+
+## ilum-manager deployment
+
+### Prerequisites
+
+- [Check the `mongo/README.md`](mongo/)
+- [Check the `kafka/README.md`](kafka/)
+- [Check the `os/README.md`](os/)
+- [ilum-core](### ilum-core deployment)
+
+#### ⚙️ Conciguration options
+
+- ILUM_STAGE = demo/prod
+- ILUM_DEBUG = true/false
+- ILUM_BACKEND_API = https://ilum.minikube/ilum/api/dev/group
+- ILUM_FRONTEND_URL = https://ilum.minikube/ilum/frontend/
+
+#### Deploy ilum-manager
+
+
+```bash
+helm install --create-namespace -n <k8s-namespace> -f conf.yaml --set image=ilum/manager:3.1.1.4 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/manager
 ```
 
