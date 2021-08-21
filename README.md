@@ -2,9 +2,6 @@
   <img src="logo.svg" width="224px"/><br/>
 </h1>
 
-<p align="center">
-> A fully manageable [Spark](https://github.com/apache/spark) cluster on [Kubernetes](https://github.com/kubernetes/kubernetes) with interactive sessions.
-</p>
 
 <p align="center">
 <a href="https://github.com/ilum-cloud/ilum-core/releases/" target="_blank"><img src="https://img.shields.io/badge/version-3.1.2.6-blue?style=for-the-badge&logo=none" alt="ilum version" /></a>
@@ -14,6 +11,8 @@
 
 
 ## 📖 Project
+
+> A fully manageable [Spark](https://github.com/apache/spark) cluster on [Kubernetes](https://github.com/kubernetes/kubernetes) with interactive sessions.
 
 Ilum is a software focused on providing interactive spark sessions manageable through REST API and web interface, independently of cluster manager type. With the many years of development, Ilum was enhanced with full integration between the S3 interface and OLAP datastore.
 
