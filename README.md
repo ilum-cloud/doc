@@ -18,7 +18,6 @@ From [Ilum 2.0](https://github.com/ilum-cloud/ilum-core/releases/tag/ilum-2.0.0)
 - Kubernetes
 - Yarn
 - Standalone
-- Mesos
 
 > 🔔 Please note: the `core`package is in a **private** repository
 
