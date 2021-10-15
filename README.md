@@ -8,6 +8,18 @@
 
 Ilum is a software focused on providing interactive spark sessions manageable through REST API and web interface, independently of cluster manager type. With the many years of development, Ilum was enhanced with full integration between the S3 interface and OLAP datastore.
 
+#### Spark Environment
+
+Several years ago many organizations started to work on moving their Spark clusters into Kubernetes environment. Before 2018 running production ready Spark on K8s was [incredibly brave](https://github.com/apache-spark-on-k8s/spark).
+With the release of [Spark 2.3](https://spark.apache.org/releases/spark-release-2-3-0.html) the K8s became a native cluster manager, in the same year we released the [Ilum 2.0](https://github.com/ilum-cloud/ilum-core/releases/tag/ilum-2.0.0).
+
+From [Ilum 2.0](https://github.com/ilum-cloud/ilum-core/releases/tag/ilum-2.0.0) kubernetes grow into a default cluster manager within the Ilum environment, but a user can choose from any supported cluster managers listed below:
+
+- Kubernetes
+- Yarn
+- Standalone
+
+> 🔔 Please note: the `core`package is in **private** repository
 
 ```bash
 helm install --create-namespace -n <k8s-namespace> -f conf.yaml --set image=ilum:2.0.0 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
