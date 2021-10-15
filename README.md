@@ -37,9 +37,9 @@ It requires MongoDB, Apache Kafka and ObjectStorage to be present and configured
 
 ### Prerequisites
 
-- [Check the `mongo/README.md`](mongo/README.md)
-- [Check the `kafka/README.md`](kafka/README.md)
-- [Check the `os/README.md`](os/README.md)
+- [Check the `mongo/README.md`](mongo/)
+- [Check the `kafka/README.md`](kafka/)
+- [Check the `os/README.md`](os/)
 
 ### 🐳 Quick start with docker and minikube
 
