@@ -28,6 +28,19 @@ From [Ilum 2.0](https://github.com/ilum-cloud/ilum-core/releases/tag/ilum-2.0.0)
 - Flexible deployment.
 - Horizontally scalable.
 - Simple and lightweight.
+- Access to build in S3 compatible K8s storage.
+- Access to build in OLAP datastore.
+
+## ⚡️ Quick start
+
+Ilum is supposed to be launched in a kubernetes environment.
+It requires MongoDB, Apache Kafka and ObjectStorage to be present and configured as well.
+
+### 🐳 Quick start with docker and minikube
+
+If you don't want to install Ilum to your system, feel free to use it on minikube.
+
+```https://minikube.sigs.k8s.io/docs/start/```
 
 ```bash
 helm install --create-namespace -n <k8s-namespace> -f conf.yaml --set image=ilum:2.0.0 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
