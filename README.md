@@ -41,9 +41,18 @@ It requires MongoDB, Apache Kafka and ObjectStorage to be present and configured
 - [Check the `kafka/README.md`](kafka/)
 - [Check the `os/README.md`](os/)
 
+The best way to start with ilum is to install it with [helm](https://helm.sh/)
+
+```bash
+helm install --create-namespace -n <k8s-namespace> -f conf.yaml --set image=ilum:2.0.0 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
+```
+
+That's all you need to know to start! 🎉
+
 ### 🐳 Quick start with docker and minikube
 
 If you don't want to install Ilum to your system, feel free to use it on minikube.
+```https://minikube.sigs.k8s.io/docs/start/```
 
 Start minikube with docker driver:
 
@@ -69,7 +78,85 @@ minikube start
 minikube stop
 ```
 
+> 🔔 Please note: the `core`package is in **private** repository
+
+### MongoDB deployment
+
+Same as in normal deployment on kubernetes.
+
+### Apache Kafka deployment
+
+Same as in normal deployment on kubernetes.
+
+### ObjectStorage deployment
+
+Same as in normal deployment on kubernetes.
+
+### ilum-core deployment
 
 ```bash
 helm install --create-namespace -n <k8s-namespace> -f conf.yaml --set image=ilum:2.0.0 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
 ```
+
+## Apache Spark job configuration
+
+Spark jobs on kubernetes to be able to run, require some configurations to be performed.
+
+While creating kubernetes cluster in `ilum`, default spark job configuration should be provided. It should contain
+information which docker image should be used, where to store required files (jars, configuration), and all the other 
+optional configuration that should be applied to all spark jobs launched on this cluster.
+
+Such configuration should be specified as a part of `defaultApplicationConfig` during kubernetes cluster creation.
+
+## Kubernetes namespace
+
+To host spark components on the other namespace that the default one, use:
+```shell
+"spark.kubernetes.namespace": "<namespace-to-use>",
+```
+
+## Apache Spark job docker image
+
+Different spark versions can be used to run different spark jobs. To achieve this docker image name should be set in 
+a cluster/session configuration. For example:
+```shell
+"spark.kubernetes.container.image": "spark:version"
+```
+
+**Important!** Note that registry holding this image have to be reachable by nodes hosting `ilum-core` and 
+spark components. It might be an issue when `ilum-core` is hosted on one kubernetes cluster, and spark components
+are hosted on the another one.
+
+## Ability to create kubernetes resources
+
+In RBAC protected kubernetes clusters spark driver has to use a service account that has the rights to create required
+kubernetes resources - pods, services etc.
+
+**Important!** If spark components are hosted one the same kubernetes cluster and in the same namespace as the 
+`ilum-core` then no actions are required. Default service account used in this namespace already has proper 
+rule configured.
+
+When other namespace to host spark components is used then it should contain service account with edit rights 
+configured.
+
+To do this, with kubernetes cluster to host spark components set as active, use:
+```shell
+kubectl create serviceaccount spark --namespace=<used-namespace>
+kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=<used-namespace>:spark --namespace=<used-namespace>
+```
+
+Then, these parameters should be added to default application config:
+```shell
+"spark.kubernetes.namespace": "<used-namespace>",
+"spark.kubernetes.authenticate.driver.serviceAccountName": "spark"
+```
+
+## Some known issues
+
+### ivy configuration issue
+
+To get rid of ivy configuration problems, add such parameter to default application config:
+```shell
+"spark.driver.extraJavaOptions": "-Divy.cache.dir=/tmp -Divy.home=/tmp"
+```
+
