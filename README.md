@@ -39,7 +39,30 @@ It requires MongoDB, Apache Kafka and ObjectStorage to be present and configured
 
 If you don't want to install Ilum to your system, feel free to use it on minikube.
 
-```https://minikube.sigs.k8s.io/docs/start/```
+Start minikube with docker driver:
+
+```bash
+minikube start --driver=docker --addons ingress
+```
+Add minikube IP to /etc/hosts:
+```
+minikube ip
+add returned ip to /etc/hosts file as `<ip> minikube ilum.minikube`
+```
+To use local docker registry run given command before loading ilum docker image in terminal -- works only in current 
+terminal session
+```shell
+eval $(minikube docker-env)
+```
+Then build docker image and use that image during helm deployment.
+
+Existing instance of minikube cluster can be started/stopped many times, 
+configured deployments should remain configured and running, use:
+```shell
+minikube start
+minikube stop
+```
+
 
 ```bash
 helm install --create-namespace -n <k8s-namespace> -f conf.yaml --set image=ilum:2.0.0 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
