@@ -4,6 +4,13 @@
 
 > A fully manageable [Spark](https://github.com/apache/spark) cluster on [Kubernetes](https://github.com/kubernetes/kubernetes) with interactive sessions.
 
+<p align="center">
+<a href="https://github.com/ilum-cloud/ilum-core/releases/" target="_blank"><img src="https://img.shields.io/badge/version-3.1.2.6-blue?style=for-the-badge&logo=none" alt="ilum version" /></a>
+<a href="https://spark.apache.org/releases/spark-release-3-1-2.html" target="_blank"><img src="https://img.shields.io/badge/Spark-3.1.2-red?style=for-the-badge&logo=apache-spark" alt="spark version" /></a>
+<a href="https://github.com/kubernetes/kubernetes/releases/tag/v1.22.1" target="_blank"><img src="https://img.shields.io/badge/Kubernetes-1.22.1-blue?style=for-the-badge&logo=kubernetes" alt="kubernetes version" /></a>
+</p>
+
+
 ## 📖 Project
 
 Ilum is a software focused on providing interactive spark sessions manageable through REST API and web interface, independently of cluster manager type. With the many years of development, Ilum was enhanced with full integration between the S3 interface and OLAP datastore.
@@ -46,7 +53,7 @@ The best way to start with ilum is to install it with [helm](https://helm.sh/)
 ```bash
 helm repo add ilum https://ilum.cloud/release/latest/helm
 helm repo update
-helm install --create-namespace -n <k8s-namespace> -f https://ilum.cloud/release/latest/ilum-config.yaml --set image=ilum:3.1.2.2 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
+helm install --create-namespace -n <k8s-namespace> -f https://ilum.cloud/release/latest/ilum-config.yaml --set image=ilum:3.1.2.6 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
 ```
 
 That's all you need to know to start! 🎉
@@ -99,7 +106,7 @@ Same as in normal deployment on kubernetes.
 ```bash
 helm repo add ilum https://ilum.cloud/release/latest/helm
 helm repo update
-helm install --create-namespace -n <k8s-namespace> -f https://ilum.cloud/release/latest/values-minikube.yaml --set image=ilum:3.1.2.2 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
+helm install --create-namespace -n <k8s-namespace> -f https://ilum.cloud/release/latest/values-minikube.yaml --set image=ilum:3.1.2.6 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
 ```
 
 ## Apache Spark job configuration
@@ -185,6 +192,6 @@ To get rid of ivy configuration problems, add such parameter to default applicat
 ```bash
 helm repo add ilum https://ilum.cloud/release/latest/helm
 helm repo update
-helm install --create-namespace -n <k8s-namespace> -f https://ilum.cloud/release/latest/values-minikube.yaml --set image=ilum-manager:3.1.2.2 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/manager
+helm install --create-namespace -n <k8s-namespace> -f https://ilum.cloud/release/latest/values-minikube.yaml --set image=ilum-manager:3.1.2.6 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/manager
 ```
 
