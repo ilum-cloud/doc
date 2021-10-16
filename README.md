@@ -44,7 +44,9 @@ It requires MongoDB, Apache Kafka and ObjectStorage to be present and configured
 The best way to start with ilum is to install it with [helm](https://helm.sh/)
 
 ```bash
-helm install --create-namespace -n <k8s-namespace> -f conf.yaml --set image=ilum:3.1.1.4 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
+helm repo add ilum https://ilum.cloud/release/latest/helm
+helm repo update
+helm install --create-namespace -n <k8s-namespace> -f https://ilum.cloud/release/latest/ilum-config.yaml --set image=ilum:3.1.2.2 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
 ```
 
 That's all you need to know to start! 🎉
@@ -95,7 +97,9 @@ Same as in normal deployment on kubernetes.
 ### ilum-core deployment
 
 ```bash
-helm install --create-namespace -n <k8s-namespace> -f conf.yaml --set image=ilum:3.1.1.4 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
+helm repo add ilum https://ilum.cloud/release/latest/helm
+helm repo update
+helm install --create-namespace -n <k8s-namespace> -f https://ilum.cloud/release/latest/values-minikube.yaml --set image=ilum:3.1.2.2 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
 ```
 
 ## Apache Spark job configuration
@@ -178,8 +182,9 @@ To get rid of ivy configuration problems, add such parameter to default applicat
 
 #### Deploy ilum-manager
 
-
 ```bash
-helm install --create-namespace -n <k8s-namespace> -f conf.yaml --set image=ilum/manager:3.1.1.4 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/manager
+helm repo add ilum https://ilum.cloud/release/latest/helm
+helm repo update
+helm install --create-namespace -n <k8s-namespace> -f https://ilum.cloud/release/latest/values-minikube.yaml --set image=ilum-manager:3.1.2.2 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/manager
 ```
 
