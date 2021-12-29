@@ -43,6 +43,26 @@ From [Ilum 2.0](https://github.com/ilum-cloud/ilum-core/releases/tag/ilum-2.0.0)
 Ilum is supposed to be launched in a kubernetes environment.
 It requires MongoDB, Apache Kafka and ObjectStorage to be present and configured as well.
 
+The best way to start with Ilum is to install the All In One version with [helm](https://helm.sh/) which contains all dependencies in a single package.
+
+- Example:
+
+```bash
+helm repo add ilum https://ilum.cloud/release/latest/helm
+helm repo update
+helm install ilum-aio ilum/core
+```
+
+We recommend using a separate namespace for the installation 
+
+`helm install ilum-aio --create-namespace -n ilum ilum/core`
+
+That's all you need to know to start! 🎉
+
+## Standard deployment
+
+In production environments, it's best to deploy all dependencies in different namespaces.
+
 ### Prerequisites
 
 - [Check the `mongo/README.md`](mongo/)
@@ -54,7 +74,7 @@ The best way to start with ilum is to install it with [helm](https://helm.sh/)
 ```bash
 helm repo add ilum https://ilum.cloud/release/latest/helm
 helm repo update
-helm install --create-namespace -n <k8s-namespace> -f https://ilum.cloud/release/latest/ilum-config.yaml --set image=ilum:3.1.2.6 --set mongo.uri=<mongo uri> --set kafka.address=<kafka broker address> ilum/core
+helm install ilum-core --create-namespace -n <k8s-namespace> --set mongo.instances=<mongo uri> --set kafka.address=<kafka broker address> --set s3a.host=<s3 host> --set s3a.port=<s3 port> ilum
 ```
 
 That's all you need to know to start! 🎉
@@ -62,20 +82,17 @@ That's all you need to know to start! 🎉
 ### 🐳 Quick start with docker and minikube
 
 If you don't want to install Ilum to your system, feel free to use it on minikube.
-```https://minikube.sigs.k8s.io/docs/start/```
 
-Start minikube with docker driver:
+Start minikube with docker driver and install Ilum:
 
 ```bash
-minikube start --driver=docker --addons ingress
+minikube start --driver=docker
+helm install ilum-aio ilum/core
 ```
-Add minikube IP to /etc/hosts:
-```
-minikube ip
-add returned ip to /etc/hosts file as `<ip> minikube ilum.minikube`
-```
+
 To use local docker registry run given command before loading ilum docker image in terminal -- works only in current 
 terminal session
+
 ```shell
 eval $(minikube docker-env)
 ```
@@ -181,7 +198,7 @@ To get rid of ivy configuration problems, add such parameter to default applicat
 - [Check the `os/README.md`](os/)
 - [ilum-core](### ilum-core deployment)
 
-#### ⚙️ Conciguration options
+#### ⚙️ Configuration options
 
 - ILUM_STAGE = demo/prod
 - ILUM_DEBUG = true/false
