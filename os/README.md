@@ -31,13 +31,13 @@ and then hit `localhost:9001` and use provided access and secret keys.
 
 To access `MinIO` through S3 API use this configuration:
 
-| property        | value                                                                       |
-|---              |---                                                                          |
-| S3 host         | `minio.minio.svc.cluster.local`                                             |
-| S3 endpoint     | `kubectl -n minio get service minio` and get the ClusterIP with 9000 port   |
-| S3 bucket       | `s3a://spark-jars` or create another one through `MinIO` console            |
-| S3 access key   | `accessKey.password` given during helm chart installing                     |
-| S3 secret key   | `secretKey.password` given during helm chart installing                     |
+| property      | value                                                                     |
+|---------------|---------------------------------------------------------------------------|
+| S3 host       | `minio.minio.svc.cluster.local`                                           |
+| S3 endpoint   | `kubectl -n minio get service minio` and get the ClusterIP with 9000 port |
+| S3 bucket     | `s3a://spark-jars` or create another one through `MinIO` console          |
+| S3 access key | `accessKey.password` given during helm chart installing                   |
+| S3 secret key | `secretKey.password` given during helm chart installing                   |
 
 **Important!** Not that this configuration works only from inside kubernetes cluster as `MinIO`, 
 by default, is not accessible externally. To achieve that either NodePort or ingress should 
@@ -47,4 +47,3 @@ Given example can be used to launch `MinIO` with `NodePort` service configured:
 ```shell
 helm install --create-namespace -n minio --set accessKey.password=minioadmin --set secretKey.password=minioadmin --set defaultBuckets=spark-jars --set service.type=NodePort --set service.nodePorts.api=30100 --set service.nodePorts.console=30101 minio bitnami/minio
 ```
-

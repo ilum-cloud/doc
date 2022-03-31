@@ -4,7 +4,7 @@
 
 
 <p align="center">
-<a href="https://github.com/ilum-cloud/ilum-core/releases/" target="_blank"><img src="https://img.shields.io/badge/version-3.1.2.7-blue?style=for-the-badge&logo=none" alt="ilum version" /></a>
+<a href="https://github.com/ilum-cloud/ilum-core/releases/" target="_blank"><img src="https://img.shields.io/badge/version-3.2.0-blue?style=for-the-badge&logo=none" alt="ilum version" /></a>
 <a href="https://spark.apache.org/releases/spark-release-3-1-2.html" target="_blank"><img src="https://img.shields.io/badge/Spark-3.1.2-red?style=for-the-badge&logo=apache-spark" alt="spark version" /></a>
 <a href="https://github.com/kubernetes/kubernetes/releases/tag/v1.22.1" target="_blank"><img src="https://img.shields.io/badge/Kubernetes-1.22.1-blue?style=for-the-badge&logo=kubernetes" alt="kubernetes version" /></a>
 </p>
@@ -57,6 +57,48 @@ trait Job {
 
 Spark session is shared between interactive jobs invocations makes sharing Spark state possible. All the Spark resources can be isolated as well by creating a new Spark session from the given one.
 
+To use `Ilum` job API, add it to your project with some dependency managers, such as Maven or Gradle.
+
+###### Maven
+
+Add `Ilum` artefacts repository to your `pom.xml` with:
+```xml
+<repositories>
+  <repository>
+    <id>ilum</id>
+    <name>ilum</name>
+    <url>https://repo.ilum.cloud</url>
+  </repository>
+</repositories>
+```
+
+And then use it in your project with:
+```xml
+<dependency>
+  <groupId>cloud.ilum</groupId>
+  <artifactId>ilum-job-api</artifactId>
+  <version>{ilum-version}</version>
+</dependency>
+```
+
+###### Gradle
+
+Add `Ilum` artefacts repository to your `build.gradle` with:
+```groovy
+repositories {
+    maven {
+        url "https://repo.ilum.cloud"
+    }
+}
+```
+
+And then use it in your project with:
+```groovy
+dependencies {
+    implementation 'cloud.ilum:ilum-job-api:<ilum-version>'
+}
+```
+
 ##### Single Spark jobs
 
 Normal Spark jobs can be submitted with a usage of `Ilum` API as well. It makes it simple to launch your existing Spark applications on different environments without any changes to the Spark application logic. `Ilum` makes them easier 
@@ -78,11 +120,11 @@ Many Kubernetes clusters can be configured and managed by `Ilum` as long as they
 
 It should be used as a default cluster for running Spark applications in production.
 
-For a detailed Spark application configuration for a given Kubernetes cluster check [spark job configuration](#spark-job-configuration) section.
+For a detailed Spark application configuration for a given Kubernetes cluster check [spark job configuration](#apache-spark-job-configuration) section.
 
 ##### Local
 
-Local is a simple cluster implementation which runs Spark applications there, where `Ilum` core is deployed. That means it runs Spark applications either inside the `ilum-core` container when deployed on docker/Kubernetes, or on the current machine when deployed without usage of any orchestrator.
+Local is a simple cluster implementation which runs Spark applications there, where `ilum-core` is deployed. That means it runs Spark applications either inside the `ilum-core` container when deployed on docker/Kubernetes, or on the current machine when deployed without usage of any orchestrator.
 
 It should be really used only for testing purposes as it can use only a limited amount of resources.
 
@@ -90,13 +132,13 @@ Only the number of threads of an available ones should be provided to configure 
 
 #### Scalability
 
-`ilum-core` was created with having in mind making it able to scale. It gives a possibility to either increase or decrease `ilum` instances amount according to load.
+`ilum-core` was created with having in mind making it able to scale. It gives a possibility to either increase or decrease `Ilum` instances amount according to load.
 
-`ilum-service` is completely stateless, which makes it able to recover all the existing state after the crash and easy to scale up and down.
+`ilum-core` is completely stateless, which makes it able to recover all the existing state after the crash and easy to scale up and down.
 
 #### High availability
 
-`Ilum` service and all the required components support HA deployments. It is possible to configure `Ilum`, `MongoDB`, `Apache Kafka` and `MinIO` to provide a fully high availability environment.
+`ilum-core` and all the required components support HA deployments. It is possible to configure `Ilum`, `MongoDB`, `Apache Kafka` and `MinIO` to provide a fully high availability environment.
 
 ## ⚡️ Quick start
 
@@ -108,15 +150,17 @@ The best way to start with `Ilum` is to install the All In One version with [hel
 - Example:
 
 ```bash
-helm repo add ilum https://ilum.cloud/release/latest/helm
-helm repo update
-helm install ilum-aio ilum/core
+$ helm repo add ilum https://charts.ilum.cloud
+$ helm install ilum ilum/ilum
+$ kubectl port-forward svc/ilum-ui 9777:9777
 ```
+
+Visit `localhost:9777` to reach an `ilum-ui`.
 
 We recommend using a separate namespace for the installation 
 
-```shell
-helm install ilum-aio --create-namespace -n ilum ilum/core
+```bash
+$ helm install ilum --create-namespace -n ilum ilum/ilum
 ```
 
 That's all you need to know to start! 🎉
@@ -129,11 +173,11 @@ In production environments, it's best to deploy all dependencies in different na
 
 To speed up the deployment we recommend the use of [helm](https://helm.sh/)
 
-| Prerequisite  | Instruction                           |
-| ------------- | ------------------------------------- |
-| MongoDB       | [Check the `mongo/README.md`](mongo/) |
-| Kafka         | [Check the `kafka/README.md`](kafka/) |
-| ObjectStorage | [Check the `os/README.md`](os/)       |
+| Prerequisite  | Instruction                                    |
+|---------------|------------------------------------------------|
+| MongoDB       | [Check the `mongo/README.md`](mongo/README.md) |
+| Kafka         | [Check the `kafka/README.md`](kafka/README.md) |
+| ObjectStorage | [Check the `os/README.md`](os/README.md)       |
 
 #### MongoDB
 
@@ -154,12 +198,25 @@ By default, communication is performed with usage of a few topics, which are cre
 `MinIO` implements `S3` interface which makes it possible to store input/output data there as well.
 
 ### Installation
-The best way to start with `Ilum` is to install it with [helm](https://helm.sh/)
+
+#### Ilum Core
+
+The best way to start with `ilum-core` is to install it with [helm](https://helm.sh/)
 
 ```bash
-helm repo add ilum https://ilum.cloud/release/latest/helm
-helm repo update
-helm install ilum-core --create-namespace -n <k8s-namespace> --set mongo.instances=<mongo uri> --set kafka.address=<kafka broker address> --set s3a.host=<s3 host> --set s3a.port=<s3 port> ilum
+$ helm repo add ilum https://charts.ilum.cloud
+$ helm repo update
+$ helm install ilum-core --create-namespace -n <k8s-namespace> --set mongo.instances=<mongo uri> --set kafka.address=<kafka broker address> --set s3a.host=<s3 host> --set s3a.port=<s3 port> ilum/ilum-core
+```
+
+#### Ilum UI
+
+The best way to start with `ilum-ui` is to install it with [helm](https://helm.sh/)
+
+```bash
+$ helm repo add ilum https://charts.ilum.cloud
+$ helm repo update
+$ helm install ilum-ui --create-namespace -n <k8s-namespace> ilum/ilum-ui
 ```
 
 That's all you need to know to start! 🎉
@@ -171,48 +228,47 @@ If you don't want to install `Ilum` to your system, feel free to use it on minik
 Start minikube with docker driver and install `Ilum`:
 
 ```bash
-minikube start --driver=docker
-helm repo add ilum https://ilum.cloud/release/latest/helm
-helm repo update
-helm install ilum-aio ilum/core
+$ minikube start --driver=docker --cpus 4 --memory 8192
 ```
+
+Install `Ilum` in the same way as in normal `Kubernetes` deployment. Check [Quick Start](#-quick-start) section for details.
 
 Existing instance of minikube cluster can be started/stopped many times, 
 configured deployments should remain configured and running, use:
 
-```shell
-minikube start
-minikube stop
+```bash
+$ minikube start
+$ minikube stop
 ```
 
 ## First time configuration
 
 To check the status of installed pods use:
 
-```shell
-kubectl get pods
+```bash
+$ kubectl get pods
 ```
 
 `ilum-core` pod needs to have status `running` .
 
-Accessing `Ilum` backend can be done by using NodePort or through port forward:
+Accessing `ilum-core` can be done by using NodePort or through port forward:
 
-```shell
-kubectl port-forward svc/ilum-core-service 8080:80
+```bash
+$ kubectl port-forward svc/ilum-core 9888:9888
 ```
 
 Listing clusters:
 
-```shell
-curl 'http://localhost:8080/api/dev/cluster'
+```bash
+$ curl 'http://localhost:9888/api/v1/cluster'
 ```
 
 The first cluster is created during initial deployment. It's preconfigured to work with the K8s instance used by `Ilum`. 
 
 To start the work with `Ilum` the scalable Spark job group needs to be created by adding the `jar` file with your application. For testing purposes the [ilum-job-example.jar](https://ilum.cloud/release/latest/ilum-job-example.jar) can be used. To create group the below curl can be used:
 
-```shell
-curl -XPOST 'http://localhost:8080/api/dev/group' \
+```bash
+$ curl -XPOST 'http://localhost:9888/api/v1/group' \
 	--form 'jars=@"/path/to/local/file/ilum-job-example.jar"' \
 	--form 'scale="1"' \
 	--form 'clusterName="default"' \
@@ -221,25 +277,31 @@ curl -XPOST 'http://localhost:8080/api/dev/group' \
 
 As a result the Group ID will be displayed, it can be later on displayed by running:
 
-```shell
-curl http://localhost:8080/api/dev/group
+```bash
+$ curl http://localhost:9888/api/v1/group
 ```
 
 To run a job and get a result the following curl can be executed, using Group ID as a path parameter:
 
-```shell
-curl -XPOST 'http://localhost:8080/api/dev/group/GROUP_ID/job' \
+```bash
+$ curl -XPOST 'http://localhost:9888/api/v1/group/GROUP_ID/job' \
 	--header 'Cache-Control: no-store' \
 	--header 'Content-Type: application/json' \
 	--data-raw '{
-	    "clazz": "com.ilum.job.example.ExampleJob",
+	    "clazz": "cloud.ilum.job.example.ExampleJob",
 	    "config": {
 	        "parameter": "Welcome to ILUM"
 	    }
 	}'
 ```
 
+### Swagger UI
 
+To get familiar with `Swagger` and to discover `Ilum` REST API visit `Swagger UI`. To do it expose `ilum-core` port with:
+```bash
+$ kubectl port-forward svc/ilum-core 9888:9888
+```
+And then reach `localhost:9888/swagger-ui.html`
 
 ## Additional configuration
 
@@ -257,7 +319,7 @@ Such configuration should be specified as a part of `defaultApplicationConfig` d
 
 Different Spark versions can be used to run different Spark jobs. To achieve this docker image name should be set in a cluster/session configuration. For example:
 
-```shell
+```
 "spark.kubernetes.container.image": "datamechanics/spark:3.1.1-hadoop-3.2.0-java-11-scala-2.12-python-3.8-latest"
 ```
 
@@ -265,14 +327,14 @@ Any Spark container image can be provided and used bym `Ilum`. The only requirem
 
 #### Jar, configuration resources storage
 
-`MinIO` is used by `Ilum` as a S3 file storage. Some other S3 compatible file system can be used as well, but at the moment `MinIO` is the quickest and the most advanced way to have file storage reachable by both `ilum-service` and Spark drivers/executors.
+`MinIO` is used by `Ilum` as a S3 file storage. Some other S3 compatible file system can be used as well, but at the moment `MinIO` is the quickest and the most advanced way to have file storage reachable by both `ilum-core` and Spark drivers/executors.
 
-Spark job resources, such as jar or configuration files have to be uploaded to some file storage by `ilum-service` and downloaded by Spark components during Spark job initialization.
+Spark job resources, such as jar or configuration files have to be uploaded to some file storage by `ilum-core` and downloaded by Spark components during Spark job initialization.
 
 To make Spark job aware of this file storage, some parameters must be provided during `Ilum` Kubernetes cluster creation.
 
 Below required parameters with some default values (assuming `spark-jars` is the name of default Spark resources bucket) are listed:
-```shell
+```
 "spark.kubernetes.file.upload.path": "s3a://spark-jars/ilum-ilum",
 "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem",
 "spark.hadoop.fs.s3a.bucket.spark-jars.host": "minio.minio.svc.cluster.local",
@@ -291,7 +353,7 @@ multiple S3 buckets at the same time. At the moment only `fs.s3a.impl` cannot be
 #### Kubernetes namespace
 
 To host Spark components on the other namespace that the default one, use:
-```shell
+```
 "spark.kubernetes.namespace": "<namespace-to-use>",
 ```
 
@@ -304,13 +366,13 @@ In RBAC protected Kubernetes clusters Spark drivers have to use a service accoun
 When another namespace to host Spark components is used then it should contain a service account with edit rights configured.
 
 To do this, with Kubernetes cluster to host Spark components set as active, use:
-```shell
-kubectl create serviceaccount spark --namespace=<used-namespace>
-kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=<used-namespace>:spark --namespace=<used-namespace>
+```bash
+$ kubectl create serviceaccount spark --namespace=<used-namespace>
+$ kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=<used-namespace>:spark --namespace=<used-namespace>
 ```
 
 Then, these parameters should be added to default application config:
-```shell
+```
 "spark.kubernetes.namespace": "<used-namespace>",
 "spark.kubernetes.authenticate.driver.serviceAccountName": "spark"
 ```
@@ -320,6 +382,8 @@ Then, these parameters should be added to default application config:
 ### Ivy configuration issue
 
 To get rid of ivy configuration problems, add such parameter to default application config:
-```shell
+```
 "spark.driver.extraJavaOptions": "-Divy.cache.dir=/tmp -Divy.home=/tmp"
 ```
+
+## Licence
