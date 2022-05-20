@@ -4,9 +4,9 @@
 
 
 <p align="center">
-<a href="https://github.com/ilum-cloud/ilum-core/releases/" target="_blank"><img src="https://img.shields.io/badge/version-3.2.0-blue?style=for-the-badge&logo=none" alt="ilum version" /></a>
+<a href="https://github.com/ilum-cloud/ilum-core/releases/" target="_blank"><img src="https://img.shields.io/badge/version-4.0.0-blue?style=for-the-badge&logo=none" alt="ilum version" /></a>
 <a href="https://spark.apache.org/releases/spark-release-3-1-2.html" target="_blank"><img src="https://img.shields.io/badge/Spark-3.1.2-red?style=for-the-badge&logo=apache-spark" alt="spark version" /></a>
-<a href="https://github.com/kubernetes/kubernetes/releases/tag/v1.22.1" target="_blank"><img src="https://img.shields.io/badge/Kubernetes-1.22.1-blue?style=for-the-badge&logo=kubernetes" alt="kubernetes version" /></a>
+<a href="https://github.com/kubernetes/kubernetes/releases/tag/v1.23.6" target="_blank"><img src="https://img.shields.io/badge/Kubernetes-1.23.6-blue?style=for-the-badge&logo=kubernetes" alt="kubernetes version" /></a>
 </p>
 
 
@@ -157,7 +157,7 @@ $ kubectl port-forward svc/ilum-ui 9777:9777
 
 Visit `localhost:9777` to reach an `ilum-ui`.
 
-We recommend using a separate namespace for the installation 
+We recommend using a separate namespace for the installation in the production environment
 
 ```bash
 $ helm install ilum --create-namespace -n ilum ilum/ilum
@@ -260,7 +260,7 @@ $ kubectl port-forward svc/ilum-core 9888:9888
 Listing clusters:
 
 ```bash
-$ curl 'http://localhost:9888/api/v1/cluster'
+$ curl 'http://localhost:9888/api/dev/reactive/cluster'
 ```
 
 The first cluster is created during initial deployment. It's preconfigured to work with the K8s instance used by `Ilum`. 
@@ -268,7 +268,7 @@ The first cluster is created during initial deployment. It's preconfigured to wo
 To start the work with `Ilum` the scalable Spark job group needs to be created by adding the `jar` file with your application. For testing purposes the [ilum-job-example.jar](https://ilum.cloud/release/latest/ilum-job-example.jar) can be used. To create group the below curl can be used:
 
 ```bash
-$ curl -XPOST 'http://localhost:9888/api/v1/group' \
+$ curl -XPOST 'http://localhost:9888/api/dev/reactive/group' \
 	--form 'jars=@"/path/to/local/file/ilum-job-example.jar"' \
 	--form 'scale="1"' \
 	--form 'clusterName="default"' \
@@ -278,13 +278,13 @@ $ curl -XPOST 'http://localhost:9888/api/v1/group' \
 As a result the Group ID will be displayed, it can be later on displayed by running:
 
 ```bash
-$ curl http://localhost:9888/api/v1/group
+$ curl http://localhost:9888/api/dev/reactive/group
 ```
 
 To run a job and get a result the following curl can be executed, using Group ID as a path parameter:
 
 ```bash
-$ curl -XPOST 'http://localhost:9888/api/v1/group/GROUP_ID/job' \
+$ curl -XPOST 'http://localhost:9888/api/dev/reactive/group/GROUP_ID/job' \
 	--header 'Cache-Control: no-store' \
 	--header 'Content-Type: application/json' \
 	--data-raw '{
@@ -386,4 +386,3 @@ To get rid of ivy configuration problems, add such parameter to default applicat
 "spark.driver.extraJavaOptions": "-Divy.cache.dir=/tmp -Divy.home=/tmp"
 ```
 
-## Licence
