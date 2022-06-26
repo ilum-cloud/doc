@@ -16,6 +16,8 @@
 
 `Ilum` is a software focused on providing interactive Spark sessions manageable through REST API and web interface, independently of cluster manager type. With the many years of development, `Ilum` was enhanced with full integration between the S3 interface and OLAP datastore. 
 
+Check [Quick Start](#%EF%B8%8F-quick-start) section for the installation details.
+
 ### Spark Environment
 
 Several years ago many organizations started to work on moving their Spark clusters into the Kubernetes environment. Before 2018 running production ready Spark on K8s was [incredibly brave](https://github.com/apache-spark-on-k8s/spark).
@@ -24,6 +26,7 @@ With the release of [Spark 2.3](https://spark.apache.org/releases/spark-release-
 From [Ilum 2.0](https://github.com/ilum-cloud/ilum-core/releases/tag/ilum-2.0.0) Kubernetes grow into a default cluster manager within the `Ilum` environment, but a user can choose from any supported cluster managers listed below:
 
 - Kubernetes
+- Yarn
 - Standalone
 
 ### Features
@@ -146,6 +149,7 @@ Only the number of threads of an available ones should be provided to configure 
 It requires `MongoDB`, `Apache Kafka` and `ObjectStorage` to be present and configured as well.
 
 The best way to start with `Ilum` is to install the All In One version with [helm](https://helm.sh/) which contains all dependencies in a single package.
+You can do it within your existing kubernetes environment or play with [minikube](#-quick-start-with-docker-and-minikube)
 
 - Example:
 
@@ -231,7 +235,7 @@ Start minikube with docker driver and install `Ilum`:
 $ minikube start --driver=docker --cpus 4 --memory 8192
 ```
 
-Install `Ilum` in the same way as in normal `Kubernetes` deployment. Check [Quick Start](#-quick-start) section for details.
+Install `Ilum` in the same way as in normal `Kubernetes` deployment. Check [Quick Start](#%EF%B8%8F-quick-start) section for details.
 
 Existing instance of minikube cluster can be started/stopped many times, 
 configured deployments should remain configured and running, use:
