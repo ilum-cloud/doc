@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="logo.svg" width="224px"/><br/>
+  <a href="https://ilum.cloud" target="_blank"><img src="logo.svg" width="224px" alt="Ilum"/></a><br/>
 </h1>
 
 
@@ -14,7 +14,7 @@
 
 > A fully manageable [Spark](https://github.com/apache/spark) cluster on [Kubernetes](https://github.com/kubernetes/kubernetes) with interactive sessions.
 
-`Ilum` is a software focused on providing interactive Spark sessions manageable through REST API and web interface, independently of cluster manager type. With the many years of development, `Ilum` was enhanced with full integration between the S3 interface and OLAP datastore. 
+`Ilum` is a software focused on providing interactive Spark sessions manageable through REST API and web interface, independently of cluster manager type. With the many years of development, `Ilum` was enhanced with full integration between the S3 interface and OLAP datastore.
 
 Check [Quick Start](#%EF%B8%8F-quick-start) section for the installation details.
 
@@ -32,7 +32,7 @@ From [Ilum 2.0](https://github.com/ilum-cloud/ilum-core/releases/tag/ilum-2.0.0)
 ### Features
 
 Thanks to `Ilum` you can easily manage Spark jobs run on Kubernetes cluster with web UI or by REST API:
-- Flexible deployment with helm 
+- Flexible deployment with helm
 - Horizontally scalable - you can start using it when you have one node and continue when you have hundreds
 - Simple and lightweight – can be installed in few minutes with auto configuration based on existing K8s cluster
 - Access to build in S3 compatible K8s storage.
@@ -49,7 +49,7 @@ There are two main types of Spark jobs that can be run with `Ilum` help - `inter
 
 The main idea behind interactive Spark jobs is to give a user a possibility to run consecutive Spark jobs without a long Spark application initialization time. It wraps Spark application logic into a long-running Spark job which is able to handle calculation requests immediately.
 
-Long-running jobs can be scaled within a long-running jobs group which gives a possibility to run the multiple job instances at the same time. Groups can hold multiple jobs and jobs can run multiple job instances. This design creates a flexible tool for users to manipulate their applications and resources. 
+Long-running jobs can be scaled within a long-running jobs group which gives a possibility to run the multiple job instances at the same time. Groups can hold multiple jobs and jobs can run multiple job instances. This design creates a flexible tool for users to manipulate their applications and resources.
 
 Simple interactive job API requiring implementing only one method gives a gateway to every Spark feature:
 ```kotlin
@@ -104,7 +104,7 @@ dependencies {
 
 ##### Single Spark jobs
 
-Normal Spark jobs can be submitted with a usage of `Ilum` API as well. It makes it simple to launch your existing Spark applications on different environments without any changes to the Spark application logic. `Ilum` makes them easier 
+Normal Spark jobs can be submitted with a usage of `Ilum` API as well. It makes it simple to launch your existing Spark applications on different environments without any changes to the Spark application logic. `Ilum` makes them easier
 to launch, monitor and stop.
 
 #### Cluster managing
@@ -125,13 +125,21 @@ It should be used as a default cluster for running Spark applications in product
 
 For a detailed Spark application configuration for a given Kubernetes cluster check [spark job configuration](#apache-spark-job-configuration) section.
 
+##### Yarn
+
+`Ilum` also supports well known `Apache Yarn` cluster. It is easy configurable with `yarn` configuration files that can
+be found in your `yarn` installation.
+
+For a detailed spark application configuration for a given kubernetes cluster check
+[spark job on yarn configuration](#spark-job-on-yarn-configuration) section.
+
 ##### Local
 
 Local is a simple cluster implementation which runs Spark applications there, where `ilum-core` is deployed. That means it runs Spark applications either inside the `ilum-core` container when deployed on docker/Kubernetes, or on the current machine when deployed without usage of any orchestrator.
 
 It should be really used only for testing purposes as it can use only a limited amount of resources.
 
-Only the number of threads of an available ones should be provided to configure local cluster type. It will be used by Spark application to calculate the results. 
+Only the number of threads of an available ones should be provided to configure local cluster type. It will be used by Spark application to calculate the results.
 
 #### Scalability
 
@@ -237,7 +245,7 @@ $ minikube start --driver=docker --cpus 4 --memory 8192
 
 Install `Ilum` in the same way as in normal `Kubernetes` deployment. Check [Quick Start](#%EF%B8%8F-quick-start) section for details.
 
-Existing instance of minikube cluster can be started/stopped many times, 
+Existing instance of minikube cluster can be started/stopped many times,
 configured deployments should remain configured and running, use:
 
 ```bash
@@ -267,7 +275,7 @@ Listing clusters:
 $ curl 'http://localhost:9888/api/dev/reactive/cluster'
 ```
 
-The first cluster is created during initial deployment. It's preconfigured to work with the K8s instance used by `Ilum`. 
+The first cluster is created during initial deployment. It's preconfigured to work with the K8s instance used by `Ilum`.
 
 To start the work with `Ilum` the scalable Spark job group needs to be created by adding the `jar` file with your application. For testing purposes the [ilum-job-example.jar](https://ilum.cloud/release/latest/ilum-job-example.jar) can be used. To create group the below curl can be used:
 
@@ -318,6 +326,12 @@ Spark jobs on Kubernetes to be able to run, require some configurations to be pe
 While creating Kubernetes cluster in `Ilum`, default Spark job configuration should be provided. It should contain information which docker image should be used, where to store required files (jars, configuration), and all the other optional configuration that should be applied to all Spark jobs launched on this cluster.
 
 Such configuration should be specified as a part of `defaultApplicationConfig` during Kubernetes cluster creation.
+
+#### Apache Spark job on yarn configuration
+
+No additional configuration is required to be able to run Spark jobs on yarn.
+
+All the optional spark configurations can be added to the created cluster/group/job instances, and they will be passed to the spark job.
 
 #### Apache Spark job docker image
 
@@ -383,7 +397,7 @@ Then, these parameters should be added to default application config:
 
 ## Some known issues
 
-### Ivy configuration issue
+### Ivy configuration issue in Kubernetes
 
 To get rid of ivy configuration problems, add such parameter to default application config:
 ```
