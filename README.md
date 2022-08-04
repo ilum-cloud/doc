@@ -4,7 +4,7 @@
 
 
 <p align="center">
-<a href="https://github.com/ilum-cloud/ilum-core/releases/" target="_blank"><img src="https://img.shields.io/badge/version-4.0.0-blue?style=for-the-badge&logo=none" alt="ilum version" /></a>
+<a href="https://github.com/ilum-cloud/ilum-core/releases/" target="_blank"><img src="https://img.shields.io/badge/version-4.1.0-blue?style=for-the-badge&logo=none" alt="ilum version" /></a>
 <a href="https://spark.apache.org/releases/spark-release-3-1-2.html" target="_blank"><img src="https://img.shields.io/badge/Spark-3.1.2-red?style=for-the-badge&logo=apache-spark" alt="spark version" /></a>
 <a href="https://github.com/kubernetes/kubernetes/releases/tag/v1.23.6" target="_blank"><img src="https://img.shields.io/badge/Kubernetes-1.23.6-blue?style=for-the-badge&logo=kubernetes" alt="kubernetes version" /></a>
 </p>
