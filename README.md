@@ -16,7 +16,7 @@
 
 `Ilum` is a software focused on providing interactive Spark sessions manageable through REST API and web interface, independently of cluster manager type. With the many years of development, `Ilum` was enhanced with full integration between the S3 interface and OLAP datastore.
 
-Check [Quick Start](#%EF%B8%8F-quick-start) section for the installation details or check our blog [Ilum Blog](https://blog.ilum.cloud)
+Check [Quick Start](#%EF%B8%8F-quick-start) section for the installation details or check our blog [Ilum Blog](https://ilum.cloud/blog)
 
 ### Spark Environment
 
