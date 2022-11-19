@@ -4,9 +4,9 @@
 
 
 <p align="center">
-<a href="https://github.com/ilum-cloud/ilum-core/releases/" target="_blank"><img src="https://img.shields.io/badge/version-4.1.0-blue?style=for-the-badge&logo=none" alt="ilum version" /></a>
+<a href="https://roadmap.ilum.cloud/updates" target="_blank"><img src="https://img.shields.io/badge/version-5.0.0-blue?style=for-the-badge&logo=none" alt="ilum version" /></a>
 <a href="https://spark.apache.org/releases/spark-release-3-1-2.html" target="_blank"><img src="https://img.shields.io/badge/Spark-3.1.2-red?style=for-the-badge&logo=apache-spark" alt="spark version" /></a>
-<a href="https://github.com/kubernetes/kubernetes/releases/tag/v1.23.6" target="_blank"><img src="https://img.shields.io/badge/Kubernetes-1.23.6-blue?style=for-the-badge&logo=kubernetes" alt="kubernetes version" /></a>
+<a href="https://github.com/kubernetes/kubernetes/releases/tag/v1.23.14" target="_blank"><img src="https://img.shields.io/badge/Kubernetes-1.23.14-blue?style=for-the-badge&logo=kubernetes" alt="kubernetes version" /></a>
 </p>
 
 
@@ -14,7 +14,7 @@
 
 > A fully manageable [Spark](https://github.com/apache/spark) cluster on [Kubernetes](https://github.com/kubernetes/kubernetes) with interactive sessions.
 
-`Ilum` is a software focused on providing interactive Spark sessions manageable through REST API and web interface, independently of cluster manager type. With the many years of development, `Ilum` was enhanced with full integration between the S3 interface and OLAP datastore.
+`Ilum` is a software focused on providing interactive Spark sessions manageable through REST API and web interface, independently of cluster manager type. With the many years of development, `Ilum` was enhanced with full integration with S3 interface.
 
 Check [Quick Start](#%EF%B8%8F-quick-start) section for the installation details or check our blog [Ilum Blog](https://ilum.cloud/blog/)
 
@@ -36,7 +36,6 @@ Thanks to `Ilum` you can easily manage Spark jobs run on Kubernetes cluster with
 - Horizontally scalable - you can start using it when you have one node and continue when you have hundreds
 - Simple and lightweight – can be installed in few minutes with auto configuration based on existing K8s cluster
 - Access to build in S3 compatible K8s storage.
-- Access to build in OLAP datastore.
 
 #### Spark jobs
 
@@ -102,16 +101,41 @@ dependencies {
 }
 ```
 
+##### Code Execution Mode
+
+Users can run live code within an existing interactive job similar to the spark-shell.
+Instructions can be sent, calculated immediately and returned. It is possible to use every spark feature, as the spark itself is exposed to users with some predefined functions and variables.
+You can do live coding with spark jobs running on the kubernetes cluster, which allows calculating even substantial data sets.
+
 ##### Single Spark jobs
 
 Normal Spark jobs can be submitted with a usage of `Ilum` API as well. It makes it simple to launch your existing Spark applications on different environments without any changes to the Spark application logic. `Ilum` makes them easier
 to launch, monitor and stop.
 
-#### Cluster managing
+### Communication Types
+
+`ilum` supports two communication types between spark jobs and `ilum-core`. Users can choose either `Apache Kafka` or
+`gRPC`.
+
+#### Apache Kafka communication
+
+Communication with the usage of `Apache Kafka` supports all `ilum` features, such as scalability and HA. All events are exchanged by auto-created topics with usage of `Apache Kafka` brokers.
+
+#### gRPC communication (default)
+
+`gRPC` as a communication type is also supported. If the user wants to use a simpler deployment method, he can use `gRPC`
+mode to omit `Apache Kafka` during installation. `gRPC` creates direct connections between `ilum-core` and spark jobs,
+so there is no need to have a separate message broker.
+
+One of the disadvantages is that, using `gRPC` causes that `ilum-core` is not HA. The current implementation doesn't
+support spreading subscriptions and requests dynamically between many instances of `ilum-core`. You can scale
+`ilum-core`, but all the existing spark jobs will keep talking with only the same `ilum-core` instances.
+
+#### Cluster types
 
 `Ilum` makes Spark cluster configuration easier. Once the cluster is configured it can be used for different jobs not depending either on their type or their amount. Cluster validation prevents users from making configuration mistakes.
 
-At the moment two types of cluster are supported in `Ilum` - `kubernetes` and `local`.
+At the moment, we support three types of clusters in `Ilum` - `kubernetes`, `yarn` and `local`.
 
 ##### Kubernetes
 
@@ -151,6 +175,13 @@ Only the number of threads of an available ones should be provided to configure 
 
 `ilum-core` and all the required components support HA deployments. It is possible to configure `Ilum`, `MongoDB`, `Apache Kafka` and `MinIO` to provide a fully high availability environment.
 
+**Important!** Note that HA deployment forces the use of Apache Kafka as the communication type. Using gRPC makes ilum
+  deployment not HA.
+
+#### Security
+
+ilum delivers a simple mechanism to secure access to the ilum-ui web console. It allows setting the default admin username and password during the deployment. At the moment only access to ilum-ui web console is secured.
+
 ## ⚡️ Quick start
 
 `Ilum` is supposed to be launched in a Kubernetes environment.
@@ -163,11 +194,11 @@ You can do it within your existing kubernetes environment or play with [minikube
 
 ```bash
 $ helm repo add ilum https://charts.ilum.cloud
-$ helm install ilum ilum/ilum
+$ helm install ilum ilum/ilum --devel
 $ kubectl port-forward svc/ilum-ui 9777:9777
 ```
 
-Visit `localhost:9777` to reach an `ilum-ui`.
+Visit `localhost:9777` to reach an `ilum-ui`. (admin/admin as default credentials)
 
 We recommend using a separate namespace for the installation in the production environment
 
@@ -201,7 +232,7 @@ All the required databases and collections are created by default during `Ilum` 
 
 `Ilum` uses `Apache Kafka` as a communication layer between `ilum-core` and Spark jobs (also between `ilum-core` instances when scaled). That requires `Apache Kafka` brokers to be reachable by both `ilum-core` and Spark job -- especially when Spark jobs are launched on some different Kubernetes cluster, connectivity must be assured.
 
-By default, communication is performed with usage of a few topics, which are created at the `Ilum` start, so the user doesn't have to bother managing them.
+With Kafka, communication is performed with usage of a few topics, which are created at the `Ilum` start, so the user doesn't have to bother managing them.
 
 #### MinIO
 
@@ -240,7 +271,7 @@ If you don't want to install `Ilum` to your system, feel free to use it on minik
 Start minikube with docker driver and install `Ilum`:
 
 ```bash
-$ minikube start --driver=docker --cpus 4 --memory 8192
+$ minikube start --cpus 4 --memory 8192 --addons metrics-server
 ```
 
 Install `Ilum` in the same way as in normal `Kubernetes` deployment. Check [Quick Start](#%EF%B8%8F-quick-start) section for details.
@@ -403,4 +434,40 @@ To get rid of ivy configuration problems, add such parameter to default applicat
 ```
 "spark.driver.extraJavaOptions": "-Divy.cache.dir=/tmp -Divy.home=/tmp"
 ```
+
+## Example deployments
+
+### Using kafka as a communication type
+
+```bash
+helm install --dependency-update --set kafka.enabled=true --set ilum-core.communication.type=kafka ilum ilum/ilum
+```
+
+### Using gRPC as a communication type (default)
+
+```bash
+helm install --dependency-update ilum ilum/ilum
+```
+
+### Using gRPC as a communication type and gRPC port exposed
+
+e.g. for Yarn to be able to reach gRPC service
+```bash
+helm install --dependency-update --set kafka.enabled=false --set ilum-core.communication.type=grpc --set ilum-core.grpc.host=<k8s-exposed-host> --set ilum-core.grpc.nodePort=<k8s-exposed-port> --set ilum-core.grpc.type=NodePort ilum ilum/ilum
+```
+
+## ilum-livy-proxy
+
+Please be aware, that ilum-livy-proxy is not bundled in ilum package by default. If you want to run this service,
+add `--set ilum-livy-proxy.enabled=true` to your installation command.
+
+## Jupyter
+
+Please be aware, that Jupyter notebook is not bundled in ilum package by default. If you want to run this service,
+add `--set ilum-jupyter.enabled=true` to your installation command.
+
+## Apache Zeppelin
+
+Please be aware, that Zeppelin notebook is not bundled in ilum package by default. If you want to run this service,
+add `--set ilum-zeppelin.enabled=true` to your installation command.
 
