@@ -4,7 +4,7 @@
 
 
 <p align="center">
-<a href="https://roadmap.ilum.cloud/updates" target="_blank"><img src="https://img.shields.io/badge/version-5.0.0-blue?style=for-the-badge&logo=none" alt="ilum version" /></a>
+<a href="https://roadmap.ilum.cloud/updates" target="_blank"><img src="https://img.shields.io/badge/version-5.0.1-blue?style=for-the-badge&logo=none" alt="ilum version" /></a>
 <a href="https://spark.apache.org/releases/spark-release-3-1-2.html" target="_blank"><img src="https://img.shields.io/badge/Spark-3.1.2-red?style=for-the-badge&logo=apache-spark" alt="spark version" /></a>
 <a href="https://github.com/kubernetes/kubernetes/releases/tag/v1.23.14" target="_blank"><img src="https://img.shields.io/badge/Kubernetes-1.23.14-blue?style=for-the-badge&logo=kubernetes" alt="kubernetes version" /></a>
 </p>
@@ -63,18 +63,6 @@ To use `Ilum` job API, add it to your project with some dependency managers, suc
 
 ###### Maven
 
-Add `Ilum` artefacts repository to your `pom.xml` with:
-```xml
-<repositories>
-  <repository>
-    <id>ilum</id>
-    <name>ilum</name>
-    <url>https://repo.ilum.cloud</url>
-  </repository>
-</repositories>
-```
-
-And then use it in your project with:
 ```xml
 <dependency>
   <groupId>cloud.ilum</groupId>
@@ -85,16 +73,6 @@ And then use it in your project with:
 
 ###### Gradle
 
-Add `Ilum` artefacts repository to your `build.gradle` with:
-```groovy
-repositories {
-    maven {
-        url "https://repo.ilum.cloud"
-    }
-}
-```
-
-And then use it in your project with:
 ```groovy
 dependencies {
     implementation 'cloud.ilum:ilum-job-api:<ilum-version>'
