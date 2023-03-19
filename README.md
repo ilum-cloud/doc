@@ -4,9 +4,9 @@
 
 
 <p align="center">
-<a href="https://roadmap.ilum.cloud/updates" target="_blank"><img src="https://img.shields.io/badge/version-5.0.1-blue?style=for-the-badge&logo=none" alt="ilum version" /></a>
-<a href="https://spark.apache.org/releases/spark-release-3-1-2.html" target="_blank"><img src="https://img.shields.io/badge/Spark-3.1.2-red?style=for-the-badge&logo=apache-spark" alt="spark version" /></a>
-<a href="https://github.com/kubernetes/kubernetes/releases/tag/v1.23.14" target="_blank"><img src="https://img.shields.io/badge/Kubernetes-1.23.14-blue?style=for-the-badge&logo=kubernetes" alt="kubernetes version" /></a>
+<a href="https://roadmap.ilum.cloud/updates" target="_blank"><img src="https://img.shields.io/badge/version-5.1.0-blue?style=for-the-badge&logo=none" alt="ilum version" /></a>
+<a href="https://spark.apache.org/releases/spark-release-3-3-0.html" target="_blank"><img src="https://img.shields.io/badge/Spark-3.3.0-red?style=for-the-badge&logo=apache-spark" alt="spark version" /></a>
+<a href="https://github.com/kubernetes/kubernetes/releases/tag/v1.25.8" target="_blank"><img src="https://img.shields.io/badge/Kubernetes-1.25.8-blue?style=for-the-badge&logo=kubernetes" alt="kubernetes version" /></a>
 </p>
 
 
@@ -14,9 +14,11 @@
 
 > A fully manageable [Spark](https://github.com/apache/spark) cluster on [Kubernetes](https://github.com/kubernetes/kubernetes) with interactive sessions.
 
-`Ilum` is a software focused on providing interactive Spark sessions manageable through REST API and web interface, independently of cluster manager type. With the many years of development, `Ilum` was enhanced with full integration with S3 interface.
+`Ilum` is a powerful software designed to manage interactive Spark sessions through REST API and web interface, regardless of the cluster manager type. With full S3 interface integration, `Ilum` makes it easy to manage Spark jobs on Kubernetes clusters with web UI or REST API.
 
-Check [Quick Start](#%EF%B8%8F-quick-start) section for the installation details or check our blog [Ilum Blog](https://ilum.cloud/blog/)
+Check [Quick Start](#%EF%B8%8F-quick-start) section for the installation details.
+
+`Ilum` provides a fully manageable Spark cluster on Kubernetes with interactive sessions. For more information on getting started, visit the [Ilum Blog](https://ilum.cloud/blog/).
 
 ### Spark Environment
 
