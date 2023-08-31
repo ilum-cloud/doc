@@ -4,11 +4,13 @@
 
 
 <p align="center">
-<a href="https://roadmap.ilum.cloud/updates" target="_blank"><img src="https://img.shields.io/badge/version-5.1.0-blue?style=for-the-badge&logo=none" alt="ilum version" /></a>
-<a href="https://spark.apache.org/releases/spark-release-3-3-0.html" target="_blank"><img src="https://img.shields.io/badge/Spark-3.3.0-red?style=for-the-badge&logo=apache-spark" alt="spark version" /></a>
-<a href="https://github.com/kubernetes/kubernetes/releases/tag/v1.25.8" target="_blank"><img src="https://img.shields.io/badge/Kubernetes-1.25.8-blue?style=for-the-badge&logo=kubernetes" alt="kubernetes version" /></a>
+<a href="https://roadmap.ilum.cloud/updates" target="_blank"><img src="https://img.shields.io/badge/version-6.0.0-blue?style=for-the-badge&logo=none" alt="ilum version" /></a>
+<a href="https://spark.apache.org/releases/spark-release-3-4-1.html" target="_blank"><img src="https://img.shields.io/badge/Spark-3.4.1-red?style=for-the-badge&logo=apache-spark" alt="spark version" /></a>
+<a href="https://github.com/kubernetes/kubernetes/releases/tag/v1.27.5" target="_blank"><img src="https://img.shields.io/badge/Kubernetes-1.27.5-blue?style=for-the-badge&logo=kubernetes" alt="kubernetes version" /></a>
 </p>
 
+> [!IMPORTANT]
+> The documentation was moved to [Ilum Official Doc](https://ilum.cloud/docs/)
 
 ## 📖 Project
 
