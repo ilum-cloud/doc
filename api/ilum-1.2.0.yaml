@@ -1,0 +1,1345 @@
+openapi: '3.0.0'
+info:
+  version: '1.2.0'
+  title: 'Ilum API'
+  description: 'Ilum API'
+  x-logo:
+    url: 'https://ilum.cloud/img/logo2.svg'
+
+servers:
+  - url: 'http://localhost:9888/api/v1'
+
+tags:
+  - name: 'Groups'
+  - name: 'Jobs'
+  - name: 'Clusters'
+  - name: 'License'
+
+paths:
+  /cluster:
+    post:
+      tags:
+        - 'Clusters'
+      summary: 'Creates a cluster definition'
+      operationId: 'create cluster'
+      requestBody:
+        $ref: '#/components/requestBodies/clusterCreation'
+      responses:
+        200:
+          $ref: '#/components/responses/clusterIdResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        409:
+          $ref: '#/components/responses/validationException'
+    get:
+      tags:
+        - 'Clusters'
+      summary: 'Returns a page of existing clusters'
+      operationId: 'list clusters'
+      parameters:
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/sort'
+      responses:
+        200:
+          $ref: '#/components/responses/clusterPageResponse'
+  /cluster/{clusterId}:
+    get:
+      tags:
+        - 'Clusters'
+      summary: 'Returns a cluster found by its id'
+      operationId: 'find cluster'
+      parameters:
+        - $ref: '#/components/parameters/clusterId'
+      responses:
+        200:
+          $ref: '#/components/responses/clusterResponse'
+        404:
+          $ref: '#/components/responses/notFoundException'
+    delete:
+      tags:
+        - 'Clusters'
+      summary: 'Deletes a cluster by its id'
+      operationId: 'delete cluster'
+      parameters:
+        - $ref: '#/components/parameters/clusterId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /cluster/names:
+    get:
+      tags:
+        - 'Clusters'
+      summary: 'Returns names of existing clusters'
+      operationId: 'list cluster names'
+      responses:
+        200:
+          $ref: '#/components/responses/clusterNamesResponse'
+  /group:
+    get:
+      tags:
+        - 'Groups'
+      summary: 'Returns a page of existing groups'
+      operationId: 'list groups'
+      parameters:
+        - $ref: '#/components/parameters/groupStates'
+        - $ref: '#/components/parameters/groupKinds'
+        - $ref: '#/components/parameters/jobStates'
+        - $ref: '#/components/parameters/clusterNames'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/sort'
+      responses:
+        200:
+          $ref: '#/components/responses/groupInfoPageResponse'
+    post:
+      tags:
+        - 'Groups'
+      summary: 'Creates a group of interactive Spark jobs'
+      operationId: 'create group'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/groupCreation'
+      responses:
+        200:
+          $ref: '#/components/responses/groupIdResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+        409:
+          $ref: '#/components/responses/validationException'
+  /group/{groupId}:
+    get:
+      tags:
+        - 'Groups'
+      summary: 'Returns a group found by its id'
+      operationId: 'find group by id'
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      responses:
+        200:
+          $ref: '#/components/responses/groupInfoResponse'
+        404:
+          $ref: '#/components/responses/notFoundException'
+    delete:
+      tags:
+        - 'Groups'
+      summary: 'Deletes a group by its id'
+      operationId: 'delete group'
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /group/{groupId}/job/execute:
+    post:
+      tags:
+        - 'Groups'
+      summary: 'Executes an interactive Spark job within chosen group'
+      description: |
+        Executes an interactive Spark job within chosen group and waits for job instance to be completed. 
+        Its result is returned as a response.
+      operationId: 'execute interactive job'
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      requestBody:
+        $ref: '#/components/requestBodies/groupJobCreation'
+      responses:
+        200:
+          $ref: '#/components/responses/groupJobInstanceInfoResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+        409:
+          $ref: '#/components/responses/validationException'
+  /group/{groupId}/job/result:
+    get:
+      tags:
+        - 'Groups'
+      summary: 'Returns a page of existing group job instance results'
+      operationId: 'interactive job results'
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/sort'
+      responses:
+        200:
+          $ref: '#/components/responses/groupJobInstanceInfoPageResponse'
+  /group/{groupId}/job/submit:
+    post:
+      tags:
+        - 'Groups'
+      summary: 'Submits an interactive Spark job within chosen group'
+      description: |
+        Submits an interactive Spark job within chosen group. It does not wait for job to be completed. 
+        Instead it returns created job instance id. Its result can be fetched by a job instance result 
+        update subscription.
+      operationId: 'submit interactive job'
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      requestBody:
+        $ref: '#/components/requestBodies/groupJobCreation'
+      responses:
+        200:
+          $ref: '#/components/responses/groupJobInstanceIdResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+        409:
+          $ref: '#/components/responses/validationException'
+  /group/{groupId}/rescale/{scale}:
+    post:
+      tags:
+        - 'Groups'
+      summary: 'Changes the count of interactive Spark jobs that chosen group uses'
+      operationId: 'rescale group'
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+        - $ref: '#/components/parameters/scale'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /group/{groupId}/stop:
+    post:
+      tags:
+        - 'Groups'
+      summary: 'Stops a chosen group and puts it in ARCHIVED state'
+      operationId: 'archive group'
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /group/job/result/updates:
+    get:
+      tags:
+        - 'Groups'
+      summary: 'Returns a stream of interactive Spark job result changes'
+      operationId: 'interactive job results stream'
+      responses:
+        200:
+          $ref: '#/components/responses/groupJobInstanceInfoStreamResponse'
+  /group/name/{groupName}:
+    get:
+      tags:
+        - 'Groups'
+      summary: 'Returns a group found by its name'
+      operationId: 'find group by name'
+      parameters:
+        - $ref: '#/components/parameters/groupName'
+      responses:
+        200:
+          $ref: '#/components/responses/groupInfoResponse'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /job:
+    get:
+      tags:
+        - 'Jobs'
+      summary: 'Returns a page of existing jobs'
+      operationId: 'list jobs'
+      parameters:
+        - $ref: '#/components/parameters/jobTypes'
+        - $ref: '#/components/parameters/jobStates'
+        - $ref: '#/components/parameters/clusterNames'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/sort'
+      responses:
+        200:
+          $ref: '#/components/responses/jobInfoPageResponse'
+  /job/{jobId}:
+    get:
+      tags:
+        - 'Jobs'
+      summary: 'Returns a job found by its id'
+      operationId: 'find job'
+      parameters:
+        - $ref: '#/components/parameters/jobId'
+      responses:
+        200:
+          $ref: '#/components/responses/jobInfoResponse'
+        404:
+          $ref: '#/components/responses/notFoundException'
+    delete:
+      tags:
+        - 'Jobs'
+      summary: 'Deletes a job found by its id'
+      operationId: 'delete job'
+      parameters:
+        - $ref: '#/components/parameters/jobId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /job/{jobId}/stop:
+    post:
+      tags:
+        - 'Jobs'
+      summary: 'Stops a chosen job and puts it in FINISHED state'
+      operationId: 'stop job'
+      parameters:
+        - $ref: '#/components/parameters/jobId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /job/{jobId}/logs:
+    get:
+      tags:
+        - 'Jobs'
+      summary: 'Returns logs for all job resources'
+      operationId: 'list job logs'
+      parameters:
+        - $ref: '#/components/parameters/jobId'
+        - $ref: '#/components/parameters/logSize'
+        - $ref: '#/components/parameters/from'
+      responses:
+        200:
+          $ref: '#/components/responses/jobLogsResponse'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /job/submit:
+    post:
+      tags:
+        - 'Jobs'
+      summary: 'Submits a single Spark job'
+      operationId: 'submit single job'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/jobCreation'
+      responses:
+        200:
+          $ref: '#/components/responses/jobIdResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+        409:
+          $ref: '#/components/responses/validationException'
+  /job/updates:
+    get:
+      tags:
+        - 'Jobs'
+      summary: 'Returns a stream of Spark job changes'
+      operationId: 'job info stream'
+      responses:
+        200:
+          $ref: '#/components/responses/jobInfoStreamResponse'
+  /license:
+    get:
+      tags:
+        - 'License'
+      summary: 'Returns current license status'
+      operationId: 'license status'
+      responses:
+        200:
+          $ref: '#/components/responses/licenceInfoResponse'
+    post:
+      tags:
+        - 'License'
+      summary: 'Attaches license key'
+      operationId: 'attach license'
+      requestBody:
+        $ref: '#/components/requestBodies/licenseCreation'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        409:
+          $ref: '#/components/responses/validationException'
+
+
+components:
+  requestBodies:
+    clusterCreation:
+      required: true
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/kubernetesClusterCreation'
+              - $ref: '#/components/schemas/localClusterCreation'
+              - $ref: '#/components/schemas/yarnClusterCreation'
+            discriminator:
+              propertyName: 'type'
+              mapping:
+                k8s: '#/components/schemas/kubernetesClusterCreation'
+                local: '#/components/schemas/localClusterCreation'
+                yarn: '#/components/schemas/yarnClusterCreation'
+    groupJobCreation:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/groupJobCreation'
+    licenseCreation:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/licenseCreation'
+
+
+  responses:
+    clusterIdResponse:
+      description: 'Created cluster id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/clusterId'
+    clusterPageResponse:
+      description: 'Page of clusters matching specified filtering and paging criteria'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/clusterInfoPage'
+    clusterNamesResponse:
+      description: 'List of clusters names'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/clusterNames'
+    clusterResponse:
+      description: 'Created cluster'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/clusterInfoElements'
+    emptySuccessfulResponse:
+      description: 'Operation succeeded'
+    groupIdResponse:
+      description: 'Created group id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/groupId'
+    groupInfoPageResponse:
+      description: 'Page of groups matching specified filtering and paging criteria'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/groupInfoPage'
+    groupInfoResponse:
+      description: 'Group found by given id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/groupInfo'
+    groupJobInstanceIdResponse:
+      description: 'Submitted job instance id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/groupJobInstanceId'
+    groupJobInstanceInfoPageResponse:
+      description: 'Page of group job instance results matching specified filtering and paging criteria'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/groupJobInstanceInfoPage'
+    groupJobInstanceInfoResponse:
+      description: 'Information about interactive Spark job instance'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/groupJobInstanceInfo'
+    groupJobInstanceInfoStreamResponse:
+      description: 'Stream of all interactive Spark job result changes'
+      content:
+        text/event-stream:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/groupJobInstanceInfo'
+    jobIdResponse:
+      description: 'Started job id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/jobId'
+    jobInfoResponse:
+      description: 'Job found by given id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/jobInfo'
+    jobInfoPageResponse:
+      description: 'Page of jobs matching specified filtering and paging criteria'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/jobInfoPage'
+    jobInfoStreamResponse:
+      description: 'Stream of job change events'
+      content:
+        text/event-stream:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/jobInfo'
+    licenceInfoResponse:
+      description: 'Current license status'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/licenseInfo'
+    licenseExpiredException:
+      description: 'License Expired Exception returned when license is no longer active and none of the modify operations can be performed'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/licenseExpiredException'
+    notFoundException:
+      description: 'Not Found Exception'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/notFoundException'
+    validationException:
+      description: 'Validation Exception'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/validationException'
+    jobLogsResponse:
+      description: 'Logs of all job resources'
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/jobResourceLog'
+
+  parameters:
+    clusterId:
+      name: clusterId
+      description: 'The unique identifier of a cluster'
+      in: path
+      required: true
+      schema:
+        type: string
+    groupKinds:
+      name: groupKinds
+      description: 'The list of group kinds to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/groupKind'
+    groupId:
+      name: groupId
+      description: 'The unique identifier of a group'
+      in: path
+      required: true
+      schema:
+        type: string
+    groupName:
+      name: groupName
+      description: 'The unique name of a group'
+      in: path
+      required: true
+      schema:
+        type: string
+    groupStates:
+      name: groupStates
+      description: 'The list of group states to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/groupState'
+    jobId:
+      name: jobId
+      description: 'The unique identifier of a job'
+      in: path
+      required: true
+      schema:
+        type: string
+    jobStates:
+      name: jobStates
+      description: 'The list of job states to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/jobState'
+    jobTypes:
+      name: jobTypes
+      description: 'The list of job types to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/jobType'
+    clusterNames:
+      name: clusterNames
+      description: 'The list of cluster names to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+    page:
+      name: page
+      description: 'The number of page to be returned'
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 0
+    scale:
+      name: scale
+      description: 'Number of instances to scale interactive Spark job to within group'
+      in: path
+      required: true
+      schema:
+        type: integer
+    search:
+      name: search
+      description: 'The word to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: string
+    size:
+      name: size
+      description: 'The size of page to be returned'
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 10
+    sort:
+      name: sort
+      description: 'The sort rules to be applied for define paging order'
+      explode: true
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          example: 'name,asc'
+    logSize:
+      name: logSize
+      description: 'Max number of log lines to return. The limit in the API is set to 25000 lines, you can change it by setting ilum.api.job.logs.maxLines parameter in the configuration file of ilum-core'
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int64
+        default: 100
+    from:
+      name: from
+      description: 'Offset from start of log'
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int64
+        default: 0
+    resourceName:
+      name: resourceName
+      description: 'The name of job resource'
+      in: path
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    groupCreation:
+      type: object
+      required:
+        - name
+        - clusterName
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        kind:
+          type: string
+          enum:
+            - JOB
+            - CODE
+          default: JOB
+        language:
+          type: string
+          enum:
+            - SCALA
+            - PYTHON
+          default: SCALA
+        clusterName:
+          type: string
+          default: default
+        jars:
+          type: array
+          items:
+            type: string
+            format: binary
+        files:
+          type: array
+          items:
+            type: string
+            format: binary
+        pyFiles:
+          type: array
+          items:
+            type: string
+            format: binary
+        jobConfig:
+          description: 'A semicolon separated list of spark parameters to be applied for the Spark job. Parameter key and value should be separated by an equal sign.'
+          type: string
+          default: spark.key=value;spark.key2=value2
+        pyRequirements:
+          description: 'A semicolon separated list of python requirements. Package name and version (if given) should be separated by a double equal sign.'
+          type: string
+          example: pandas==2.0.0;numpy==1.0.0
+        scale:
+          description: 'Integer count of Spark jobs to be launched within this group'
+          type: string
+          default: 1
+    groupId:
+      type: object
+      properties:
+        groupId:
+          type: string
+    groupInfo:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        kind:
+          type: string
+        language:
+          type: string
+        clusterName:
+          type: string
+        state:
+          type: string
+        scale:
+          type: integer
+        jobConfig:
+          type: object
+          additionalProperties: true
+        createdTime:
+          type: integer
+          format: int64
+        archivedTime:
+          type: integer
+          format: int64
+        jobs:
+          $ref: '#/components/schemas/jobInfoList'
+    groupInfoPage:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/paged'
+        - $ref: '#/components/schemas/groupInfoPageElements'
+    groupInfoPageElements:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/groupInfo'
+    groupJobCreation:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/groupJobCreationTypeJobExecute'
+        - $ref: '#/components/schemas/groupJobCreationTypeCodeExecute'
+        - $ref: '#/components/schemas/groupJobCreationTypeCodeComplete'
+      discriminator:
+        propertyName: 'type'
+        mapping:
+          interactive_job_execute: '#/components/schemas/groupJobCreationTypeJobExecute'
+          interactive_code_execute: '#/components/schemas/groupJobCreationTypeCodeExecute'
+          interactive_code_complete: '#/components/schemas/groupJobCreationTypeCodeComplete'
+    groupJobCreationTypeJobExecute:
+      type: object
+      required:
+        - type
+        - jobClass
+        - jobConfig
+      properties:
+        type:
+          type: string
+          default: 'interactive_job_execute'
+        jobClass:
+          type: string
+        jobConfig:
+          type: object
+          additionalProperties: true
+    groupJobCreationTypeCodeExecute:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+          default: 'interactive_code_execute'
+        code:
+          type: string
+    groupJobCreationTypeCodeComplete:
+      type: object
+      required:
+        - type
+        - code
+        - cursor
+      properties:
+        type:
+          type: string
+          default: 'interactive_code_complete'
+        code:
+          type: string
+        cursor:
+          type: integer
+    groupJobInstanceInfo:
+      type: object
+      properties:
+        jobInstanceId:
+          type: string
+        jobId:
+          type: string
+        groupId:
+          type: string
+        startTime:
+          type: integer
+          format: int64
+        endTime:
+          type: integer
+          format: int64
+        jobClass:
+          type: string
+        jobConfig:
+          type: object
+          additionalProperties: true
+        result:
+          type: string
+        error:
+          $ref: '#/components/schemas/groupJobInstanceError'
+    groupJobInstanceError:
+      type: object
+      properties:
+        message:
+          type: string
+        stackTrace:
+          type: string
+    groupJobInstanceId:
+      type: object
+      properties:
+        jobInstanceId:
+          type: string
+    groupJobInstanceInfoPage:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/paged'
+        - $ref: '#/components/schemas/groupJobInstanceInfoPageElements'
+    groupJobInstanceInfoPageElements:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/groupJobInstanceInfo'
+    groupKind:
+      type: string
+      enum:
+        - JOB
+        - CODE
+      default: JOB
+    groupState:
+      type: string
+      enum:
+        - ACTIVE
+        - ARCHIVED
+    jobCreation:
+      type: object
+      required:
+        - name
+        - clusterName
+      properties:
+        name:
+          type: string
+        language:
+          type: string
+          enum:
+            - SCALA
+            - PYTHON
+          default: SCALA
+        clusterName:
+          type: string
+          default: default
+        jobClass:
+          type: string
+        jars:
+          type: array
+          items:
+            type: string
+            format: binary
+        files:
+          type: array
+          items:
+            type: string
+            format: binary
+        pyFiles:
+          type: array
+          items:
+            type: string
+            format: binary
+        jobConfig:
+          description: 'A semicolon separated list of spark parameters to be applied for the Spark job. Parameter key and value should be separated by an equal sign.'
+          type: string
+          default: spark.key=value;spark.key2=value2
+        pyRequirements:
+          description: 'A semicolon separated list of python requirements. Package name and version (if given) should be separated by a double equal sign.'
+          type: string
+          example: pandas==2.0.0;numpy==1.0.0
+        args:
+          description: 'A semicolon separated list of spark arguments to be applied for the Spark job.'
+          type: string
+    jobId:
+      type: object
+      properties:
+        jobId:
+          type: string
+    jobInfo:
+      type: object
+      properties:
+        jobId:
+         type: string
+        groupId:
+          type: string
+        jobName:
+          type: string
+        jobType:
+          type: string
+        language:
+          type: string
+        clusterName:
+          type: string
+        appId:
+          type: string
+        state:
+          type: string
+        error:
+          type: string
+        startTime:
+          type: integer
+          format: int64
+        endTime:
+          type: integer
+          format: int64
+    jobInfoList:
+      type: array
+      items:
+        $ref: '#/components/schemas/jobInfo'
+    jobInfoPage:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/paged'
+        - $ref: '#/components/schemas/jobInfoPageElements'
+    jobInfoPageElements:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/jobInfo'
+    jobState:
+      type: string
+      enum:
+        - SUBMITTED
+        - STARTING
+        - READY
+        - BUSY
+        - FAILED
+        - FINISHED
+        - UNKNOWN
+    jobType:
+      type: string
+      enum:
+        - SINGLE
+        - INTERACTIVE
+        - SHELL
+    clusterId:
+      type: object
+      properties:
+        clusterId:
+          type: string
+    clusterInfoPage:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/paged'
+        - $ref: '#/components/schemas/clusterInfoPageElements'
+    clusterInfoPageElements:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/clusterInfoPageElementsItem'
+    clusterInfoPageElementsItem:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/kubernetesClusterInfo'
+        - $ref: '#/components/schemas/localClusterInfo'
+        - $ref: '#/components/schemas/yarnClusterInfo'
+      discriminator:
+        propertyName: 'type'
+        mapping:
+          k8s: '#/components/schemas/kubernetesClusterInfo'
+          local: '#/components/schemas/localClusterInfo'
+          yarn: '#/components/schemas/yarnClusterInfo'
+    clusterNames:
+      type: object
+      properties:
+        names:
+          type: array
+          items:
+            type: string
+    clusterCreation:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        defaultApplicationConfig:
+          type: string
+          additionalProperties:
+            type: string
+    kubernetesClusterCreation:
+      allOf:
+        - $ref: '#/components/schemas/clusterCreation'
+        - $ref: '#/components/schemas/kubernetesClusterCreationPart'
+    kubernetesClusterCreationPart:
+      type: object
+      required:
+        - type
+        - name
+        - url
+      properties:
+        type:
+          type: string
+          default: 'k8s'
+        defaultApplicationConfig:
+          type: string
+          additionalProperties:
+            type: string
+        url:
+          type: string
+        caCert:
+          type: string
+        clientCert:
+          type: string
+        clientKey:
+          type: string
+        clientKeyAlgorithm:
+          type: string
+        clientKeyPassphrase:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+    localClusterCreation:
+      allOf:
+        - $ref: '#/components/schemas/clusterCreation'
+        - $ref: '#/components/schemas/localClusterCreationPart'
+    localClusterCreationPart:
+      type: object
+      required:
+        - type
+        - name
+        - threads
+      properties:
+        type:
+          type: string
+          default: 'local'
+        threads:
+          type: integer
+    yarnClusterCreation:
+      allOf:
+        - $ref: '#/components/schemas/clusterCreation'
+        - $ref: '#/components/schemas/yarnClusterCreationPart'
+    yarnClusterCreationPart:
+      type: object
+      required:
+        - type
+        - name
+      properties:
+        type:
+          type: string
+          default: 'yarn'
+        defaultApplicationConfig:
+          type: string
+          additionalProperties:
+            type: string
+        hadoopUsername:
+          type: string
+        configurationFiles:
+          type: string
+          additionalProperties:
+            type: string
+        keyTab:
+          type: string
+        principal:
+          type: string
+        krb5:
+          type: string
+        trustStore:
+          type: string
+    clusterInfo:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        sparkMaster:
+          type: string
+        sparkDeployMode:
+          type: string
+        defaultApplicationConfig:
+          type: string
+          additionalProperties:
+            type: string
+    kubernetesClusterInfo:
+      allOf:
+        - $ref: '#/components/schemas/clusterInfo'
+        - $ref: '#/components/schemas/kubernetesClusterInfoPart'
+    kubernetesClusterInfoPart:
+      type: object
+      required:
+        - type
+        - name
+        - url
+      properties:
+        type:
+          type: string
+          default: 'k8s'
+        defaultApplicationConfig:
+          type: string
+          additionalProperties:
+            type: string
+        url:
+          type: string
+        caCert:
+          type: string
+        clientCert:
+          type: string
+        clientKey:
+          type: string
+        clientKeyAlgorithm:
+          type: string
+        clientKeyPassphrase:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+    localClusterInfo:
+      allOf:
+        - $ref: '#/components/schemas/clusterInfo'
+        - $ref: '#/components/schemas/localClusterInfoPart'
+    localClusterInfoPart:
+      type: object
+      required:
+        - type
+        - name
+        - threads
+      properties:
+        type:
+          type: string
+          default: 'local'
+        threads:
+          type: integer
+    yarnClusterInfo:
+      allOf:
+        - $ref: '#/components/schemas/clusterInfo'
+        - $ref: '#/components/schemas/yarnClusterInfoPart'
+    yarnClusterInfoPart:
+      type: object
+      required:
+        - type
+        - name
+      properties:
+        type:
+          type: string
+          default: 'yarn'
+        defaultApplicationConfig:
+          type: string
+          additionalProperties:
+            type: string
+        hadoopUsername:
+          type: string
+        configurationFiles:
+          type: string
+          additionalProperties:
+            type: string
+        keyTab:
+          type: string
+        principal:
+          type: string
+        krb5:
+          type: string
+        trustStore:
+          type: string
+    clusterInfoElements:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/kubernetesClusterInfo'
+        - $ref: '#/components/schemas/localClusterInfo'
+        - $ref: '#/components/schemas/yarnClusterInfo'
+      discriminator:
+        propertyName: 'type'
+        mapping:
+          k8s: '#/components/schemas/kubernetesClusterInfo'
+          local: '#/components/schemas/localClusterInfo'
+          yarn: '#/components/schemas/yarnClusterInfo'
+    licenseCreation:
+      type: object
+      required:
+        - key
+      properties:
+        key:
+          type: string
+    licenseInfo:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: '#/components/schemas/licenseInfoStatus'
+        expire:
+          type: string
+    licenseInfoStatus:
+      type: string
+      enum:
+        - GREEN
+        - YELLOW
+        - RED
+    paged:
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/pageInfo'
+        sort:
+          $ref: '#/components/schemas/sort'
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+        first:
+          type: boolean
+        last:
+          type: boolean
+        empty:
+          type: boolean
+    pageInfo:
+      type: object
+      properties:
+        number:
+          type: integer
+        size:
+          type: integer
+        offset:
+          type: integer
+        paged:
+          type: boolean
+    sort:
+      type: array
+      items:
+        type: string
+    licenseExpiredException:
+      type: object
+      properties:
+        message:
+          type: string
+    notFoundException:
+      type: object
+      properties:
+        message:
+          type: string
+    validationException:
+      type: object
+      properties:
+        message:
+          type: string
+    jobResourceLog:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        role:
+          type: string
+        state:
+          type: string
+        from:
+          type: integer
+          format: int64
+        logSize:
+          type: integer
+          format: int64
+        fileName:
+          type: string
+        log:
+          type: array
+          items:
+            type: string
