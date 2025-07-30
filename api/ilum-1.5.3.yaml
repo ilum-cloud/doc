@@ -1,0 +1,2897 @@
+openapi: '3.0.0'
+info:
+  version: '1.5.3'
+  title: 'Ilum API'
+  description: 'Ilum API'
+  x-logo:
+    url: 'https://ilum.cloud/img/logo2.svg'
+
+servers:
+  - url: 'http://localhost:9888/api/v1'
+
+tags:
+  - name: 'Group'
+  - name: 'Schedule'
+  - name: 'Job'
+  - name: 'Cluster'
+  - name: 'License'
+  - name: 'SQL'
+
+paths:
+  /cluster:
+    post:
+      tags:
+        - 'Cluster'
+      summary: 'Creates a cluster definition'
+      operationId: 'create cluster'
+      requestBody:
+        $ref: '#/components/requestBodies/cluster'
+      responses:
+        200:
+          $ref: '#/components/responses/clusterIdResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        409:
+          $ref: '#/components/responses/validationException'
+    get:
+      tags:
+        - 'Cluster'
+      summary: 'Returns a page of existing clusters'
+      operationId: 'list clusters'
+      parameters:
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/sort'
+      responses:
+        200:
+          $ref: '#/components/responses/clusterPageResponse'
+  /cluster/{clusterId}:
+    get:
+      tags:
+        - 'Cluster'
+      summary: 'Returns a cluster found by its id'
+      operationId: 'find cluster'
+      parameters:
+        - $ref: '#/components/parameters/clusterId'
+      responses:
+        200:
+          $ref: '#/components/responses/clusterResponse'
+        404:
+          $ref: '#/components/responses/notFoundException'
+    put:
+      tags:
+        - 'Cluster'
+      summary: 'Updates a cluster by its id'
+      operationId: 'update cluster'
+      parameters:
+        - $ref: '#/components/parameters/clusterId'
+      requestBody:
+        $ref: '#/components/requestBodies/cluster'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+        409:
+          $ref: '#/components/responses/validationException'
+    delete:
+      tags:
+        - 'Cluster'
+      summary: 'Deletes a cluster by its id'
+      operationId: 'delete cluster'
+      parameters:
+        - $ref: '#/components/parameters/clusterId'
+        - $ref: '#/components/parameters/force'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /cluster/names:
+    get:
+      tags:
+        - 'Cluster'
+      summary: 'Returns names of existing clusters'
+      operationId: 'list cluster names'
+      responses:
+        200:
+          $ref: '#/components/responses/clusterNamesResponse'
+  /cluster/namespace:
+    post:
+      tags:
+        - 'Cluster'
+      summary: 'Creates a namespace for a cluster'
+      operationId: 'create namespace'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/namespaceCreation'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        409:
+          $ref: '#/components/responses/validationException'
+  /group:
+    get:
+      tags:
+        - 'Group'
+      summary: 'Returns a page of existing groups'
+      operationId: 'list groups'
+      parameters:
+        - $ref: '#/components/parameters/groupStates'
+        - $ref: '#/components/parameters/groupKinds'
+        - $ref: '#/components/parameters/jobStates'
+        - $ref: '#/components/parameters/clusterNames'
+        - $ref: '#/components/parameters/tags'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/sort'
+      responses:
+        200:
+          $ref: '#/components/responses/groupInfoPageResponse'
+    post:
+      tags:
+        - 'Group'
+      summary: 'Creates a group of interactive Spark jobs'
+      operationId: 'create group'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/groupCreation'
+      responses:
+        200:
+          $ref: '#/components/responses/groupIdResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+        409:
+          $ref: '#/components/responses/validationException'
+  /group/{groupId}:
+    get:
+      tags:
+        - 'Group'
+      summary: 'Returns a group found by its id'
+      operationId: 'find group by id'
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      responses:
+        200:
+          $ref: '#/components/responses/groupInfoResponse'
+        404:
+          $ref: '#/components/responses/notFoundException'
+    delete:
+      tags:
+        - 'Group'
+      summary: 'Deletes a group by its id'
+      operationId: 'delete group'
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+    put:
+      tags:
+        - 'Group'
+      summary: 'Updates a group by its id'
+      operationId: 'update group'
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/groupUpdate'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+        409:
+          $ref: '#/components/responses/validationException'
+  /group/{groupId}/job/execute:
+    post:
+      tags:
+        - 'Group'
+      summary: 'Executes an interactive Spark job within chosen group'
+      description: |
+        Executes an interactive Spark job within chosen group and waits for job instance to be completed. 
+        Its result is returned as a response.
+      operationId: 'execute interactive job'
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      requestBody:
+        $ref: '#/components/requestBodies/groupJobCreation'
+      responses:
+        200:
+          $ref: '#/components/responses/groupJobInstanceInfoResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+        409:
+          $ref: '#/components/responses/validationException'
+  /group/{groupId}/job/result:
+    get:
+      tags:
+        - 'Group'
+      summary: 'Returns a page of existing group job instance results'
+      operationId: 'interactive job results'
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/sort'
+      responses:
+        200:
+          $ref: '#/components/responses/groupJobInstanceInfoPageResponse'
+  /group/{groupId}/job/submit:
+    post:
+      tags:
+        - 'Group'
+      summary: 'Submits an interactive Spark job within chosen group'
+      description: |
+        Submits an interactive Spark job within chosen group. It does not wait for job to be completed. 
+        Instead it returns created job instance id. Its result can be fetched by a job instance result 
+        update subscription.
+      operationId: 'submit interactive job'
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      requestBody:
+        $ref: '#/components/requestBodies/groupJobCreation'
+      responses:
+        200:
+          $ref: '#/components/responses/groupJobInstanceIdResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+        409:
+          $ref: '#/components/responses/validationException'
+  /group/{groupId}/rescale/{scale}:
+    post:
+      tags:
+        - 'Group'
+      summary: 'Changes the count of interactive Spark jobs that chosen group uses'
+      operationId: 'rescale group'
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+        - $ref: '#/components/parameters/scale'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /group/{groupId}/restart:
+    post:
+      tags:
+        - 'Group'
+      summary: 'Restarts a chosen group'
+      operationId: 'restart group'
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /group/{groupId}/pause:
+    post:
+      tags:
+        - 'Group'
+      summary: 'Pauses a chosen group'
+      operationId: 'pause group'
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /group/{groupId}/resume:
+    post:
+      tags:
+        - 'Group'
+      summary: 'Resumes a chosen group'
+      operationId: 'resume group'
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /group/{groupId}/stop:
+    post:
+      tags:
+        - 'Group'
+      summary: 'Stops a chosen group and puts it in ARCHIVED state'
+      operationId: 'archive group'
+      parameters:
+        - $ref: '#/components/parameters/groupId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /group/job/result/updates:
+    get:
+      tags:
+        - 'Group'
+      summary: 'Returns a stream of interactive Spark job result changes'
+      operationId: 'interactive job results stream'
+      parameters:
+        - $ref: '#/components/parameters/jobIds'
+        - $ref: '#/components/parameters/groupIds'
+        - $ref: '#/components/parameters/clusterNames'
+        - $ref: '#/components/parameters/groupNames'
+        - $ref: '#/components/parameters/tags'
+      responses:
+        200:
+          $ref: '#/components/responses/groupJobInstanceInfoStreamResponse'
+  /group/name/{groupName}:
+    get:
+      tags:
+        - 'Group'
+      summary: 'Returns a group found by its name'
+      operationId: 'find group by name'
+      parameters:
+        - $ref: '#/components/parameters/groupName'
+      responses:
+        200:
+          $ref: '#/components/responses/groupInfoResponse'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /schedule:
+    get:
+      tags:
+        - 'Schedule'
+      summary: 'Returns a page of existing schedules'
+      operationId: 'list schedules'
+      parameters:
+        - $ref: '#/components/parameters/scheduleStates'
+        - $ref: '#/components/parameters/scheduleCrons'
+        - $ref: '#/components/parameters/jobStates'
+        - $ref: '#/components/parameters/clusterNames'
+        - $ref: '#/components/parameters/tags'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/sort'
+      responses:
+        200:
+          $ref: '#/components/responses/scheduleInfoPageResponse'
+    post:
+      tags:
+        - 'Schedule'
+      summary: 'Creates a schedule of single Spark jobs'
+      operationId: 'create schedule'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/scheduleCreation'
+      responses:
+        200:
+          $ref: '#/components/responses/scheduleIdResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+        409:
+          $ref: '#/components/responses/validationException'
+  /schedule/{scheduleId}:
+    get:
+      tags:
+        - 'Schedule'
+      summary: 'Returns a schedule found by its id'
+      operationId: 'find schedule by id'
+      parameters:
+        - $ref: '#/components/parameters/scheduleId'
+      responses:
+        200:
+          $ref: '#/components/responses/scheduleInfoResponse'
+        404:
+          $ref: '#/components/responses/notFoundException'
+    put:
+      tags:
+        - 'Schedule'
+      summary: 'Updates a schedule by its id'
+      operationId: 'update schedule'
+      parameters:
+        - $ref: '#/components/parameters/scheduleId'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/scheduleUpdate'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+        409:
+          $ref: '#/components/responses/validationException'
+    delete:
+      tags:
+        - 'Schedule'
+      summary: 'Deletes a schedule by its id'
+      operationId: 'delete schedule'
+      parameters:
+        - $ref: '#/components/parameters/scheduleId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /schedule/{scheduleId}/pause:
+    post:
+      tags:
+        - 'Schedule'
+      summary: 'Pauses a chosen schedule'
+      operationId: 'pause schedule'
+      parameters:
+        - $ref: '#/components/parameters/scheduleId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /schedule/{scheduleId}/resume:
+    post:
+      tags:
+        - 'Schedule'
+      summary: 'Resumes a chosen schedule'
+      operationId: 'resume schedule'
+      parameters:
+        - $ref: '#/components/parameters/scheduleId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /schedule/{scheduleId}/stop:
+    post:
+      tags:
+        - 'Schedule'
+      summary: 'Stops a chosen schedule and puts it in DISABLED state'
+      operationId: 'disable schedule'
+      parameters:
+        - $ref: '#/components/parameters/scheduleId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /schedule/name/{scheduleName}:
+    get:
+      tags:
+        - 'Schedule'
+      summary: 'Returns a schedule found by its name'
+      operationId: 'find schedule by name'
+      parameters:
+        - $ref: '#/components/parameters/scheduleName'
+      responses:
+        200:
+          $ref: '#/components/responses/scheduleInfoResponse'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /job:
+    get:
+      tags:
+        - 'Job'
+      summary: 'Returns a page of existing jobs'
+      operationId: 'list jobs'
+      parameters:
+        - $ref: '#/components/parameters/jobTypes'
+        - $ref: '#/components/parameters/jobStates'
+        - $ref: '#/components/parameters/clusterNames'
+        - $ref: '#/components/parameters/tags'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/sort'
+      responses:
+        200:
+          $ref: '#/components/responses/jobInfoPageResponse'
+  /job/{jobId}:
+    get:
+      tags:
+        - 'Job'
+      summary: 'Returns a job found by its id'
+      operationId: 'find job'
+      parameters:
+        - $ref: '#/components/parameters/jobId'
+      responses:
+        200:
+          $ref: '#/components/responses/jobInfoResponse'
+        404:
+          $ref: '#/components/responses/notFoundException'
+    delete:
+      tags:
+        - 'Job'
+      summary: 'Deletes a job found by its id'
+      operationId: 'delete job'
+      parameters:
+        - $ref: '#/components/parameters/jobId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /job/{jobId}/stop:
+    post:
+      tags:
+        - 'Job'
+      summary: 'Stops a chosen job and puts it in CANCELED state'
+      operationId: 'stop job'
+      parameters:
+        - $ref: '#/components/parameters/jobId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /job/{jobId}/logs:
+    get:
+      tags:
+        - 'Job'
+      summary: 'Returns logs for all job resources'
+      operationId: 'list job logs'
+      parameters:
+        - $ref: '#/components/parameters/jobId'
+        - $ref: '#/components/parameters/logSize'
+        - $ref: '#/components/parameters/from'
+      responses:
+        200:
+          $ref: '#/components/responses/jobLogsResponse'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /job/submit:
+    post:
+      tags:
+        - 'Job'
+      summary: 'Submits a single Spark job'
+      operationId: 'submit single job'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/jobCreation'
+      responses:
+        200:
+          $ref: '#/components/responses/jobIdResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+        409:
+          $ref: '#/components/responses/validationException'
+  /job/updates:
+    get:
+      tags:
+        - 'Job'
+      summary: 'Returns a stream of Spark job changes'
+      operationId: 'job info stream'
+      parameters:
+        - $ref: '#/components/parameters/jobIds'
+        - $ref: '#/components/parameters/groupIds'
+        - $ref: '#/components/parameters/clusterNames'
+        - $ref: '#/components/parameters/tags'
+      responses:
+        200:
+          $ref: '#/components/responses/jobInfoStreamResponse'
+  /license:
+    get:
+      tags:
+        - 'License'
+      summary: 'Returns current license status'
+      operationId: 'license status'
+      responses:
+        200:
+          $ref: '#/components/responses/licenceInfoResponse'
+    post:
+      tags:
+        - 'License'
+      summary: 'Attaches license key'
+      operationId: 'attach license'
+      requestBody:
+        $ref: '#/components/requestBodies/licenseCreation'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        409:
+          $ref: '#/components/responses/validationException'
+  /sql/engine/{clusterId}:
+    get:
+      tags:
+        - 'SQL'
+      summary: 'Returns information about SQL engines'
+      operationId: 'list SQL engines'
+      parameters:
+        - $ref: '#/components/parameters/clusterId'
+      responses:
+        200:
+          $ref: '#/components/responses/sqlEngineListResponse'
+        409:
+          $ref: '#/components/responses/validationException'
+    post:
+      tags:
+        - 'SQL'
+      summary: 'Creates an SQL engine'
+      operationId: 'create SQL engine'
+      parameters:
+        - $ref: '#/components/parameters/clusterId'
+      requestBody:
+        $ref: '#/components/requestBodies/sqlEngineCreation'
+      responses:
+        200:
+          $ref: '#/components/responses/sqlEngineIdResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        409:
+          $ref: '#/components/responses/validationException'
+  /sql/engine/{sqlEngineId}:
+    delete:
+      tags:
+        - 'SQL'
+      summary: 'Shuts down an SQL engine by its id'
+      operationId: 'delete SQL engine'
+      parameters:
+        - $ref: '#/components/parameters/sqlEngineId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+        409:
+          $ref: '#/components/responses/validationException'
+  /sql/execute:
+    post:
+      tags:
+        - 'SQL'
+      summary: 'Executes an SQL statement'
+      operationId: 'execute SQL statement'
+      requestBody:
+        $ref: '#/components/requestBodies/sqlStatementCreation'
+      responses:
+        200:
+          $ref: '#/components/responses/sqlStatementResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        409:
+          $ref: '#/components/responses/validationException'
+  /sql/statement:
+    get:
+      tags:
+        - 'SQL'
+      summary: 'Returns paginated list of saved SQL statements'
+      operationId: 'list saved SQL statements'
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/search'
+      responses:
+        200:
+          $ref: '#/components/responses/sqlStatementTemplatePageResponse'
+        409:
+          $ref: '#/components/responses/validationException'
+    post:
+      tags:
+        - 'SQL'
+      summary: 'Saves an SQL statement'
+      operationId: 'save SQL statement'
+      requestBody:
+        $ref: '#/components/requestBodies/sqlStatementTemplateData'
+      responses:
+        200:
+          $ref: '#/components/responses/sqlQueryIdResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        409:
+          $ref: '#/components/responses/validationException'
+  /sql/statement/{sqlSavedId}:
+    get:
+      tags:
+        - 'SQL'
+      summary: 'Returns a saved SQL statement found by its id'
+      operationId: 'find saved SQL statement'
+      parameters:
+        - $ref: '#/components/parameters/sqlSavedId'
+      responses:
+        200:
+          $ref: '#/components/responses/sqlStatementTemplateResponse'
+        404:
+          $ref: '#/components/responses/notFoundException'
+    put:
+      tags:
+        - 'SQL'
+      summary: 'Updates a saved SQL statement found by its id'
+      operationId: 'update saved SQL statement'
+      parameters:
+        - $ref: '#/components/parameters/sqlSavedId'
+      requestBody:
+        $ref: '#/components/requestBodies/sqlStatementTemplateData'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+    delete:
+      tags:
+        - 'SQL'
+      summary: 'Deletes a saved SQL statement found by its id'
+      operationId: 'delete saved SQL statement'
+      parameters:
+        - $ref: '#/components/parameters/sqlSavedId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+  /sql/notebooks:
+    get:
+      tags:
+        - 'SQL'
+      summary: 'Returns a page of SQL notebooks'
+      operationId: sqlNotebookPage
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/search'
+      responses:
+        200:
+          $ref: '#/components/responses/sqlNotebookPageResponse'
+        409:
+          $ref: '#/components/responses/validationException'
+    post:
+      tags:
+        - 'SQL'
+      summary: 'Creates an SQL notebook'
+      operationId: sqlNotebookCreate
+      requestBody:
+        $ref: '#/components/requestBodies/sqlNotebookUpdate'
+      responses:
+        200:
+          $ref: '#/components/responses/sqlNotebookIdResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        409:
+          $ref: '#/components/responses/validationException'
+  /sql/notebooks/{sqlNotebookId}:
+    get:
+      tags:
+        - 'SQL'
+      summary: 'Returns an SQL notebook found by its id'
+      operationId: sqlNotebookFind
+      parameters:
+        - $ref: '#/components/parameters/sqlNotebookId'
+      responses:
+        200:
+          $ref: '#/components/responses/sqlNotebookResponse'
+        404:
+          $ref: '#/components/responses/notFoundException'
+    put:
+      tags:
+        - 'SQL'
+      summary: 'Updates an SQL notebook found by its id'
+      operationId: sqlNotebookUpdate
+      parameters:
+        - $ref: '#/components/parameters/sqlNotebookId'
+      requestBody:
+        $ref: '#/components/requestBodies/sqlNotebookUpdate'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+        409:
+          $ref: '#/components/responses/validationException'
+    delete:
+      tags:
+        - 'SQL'
+      summary: 'Deletes an SQL notebook found by its id'
+      operationId: sqlNotebookDelete
+      parameters:
+        - $ref: '#/components/parameters/sqlNotebookId'
+      responses:
+        200:
+          $ref: '#/components/responses/emptySuccessfulResponse'
+        402:
+          $ref: '#/components/responses/licenseExpiredException'
+        404:
+          $ref: '#/components/responses/notFoundException'
+
+
+components:
+  requestBodies:
+    cluster:
+      required: true
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/kubernetesCluster'
+              - $ref: '#/components/schemas/localCluster'
+              - $ref: '#/components/schemas/yarnCluster'
+            discriminator:
+              propertyName: 'type'
+              mapping:
+                k8s: '#/components/schemas/kubernetesCluster'
+                local: '#/components/schemas/localCluster'
+                yarn: '#/components/schemas/yarnCluster'
+    groupJobCreation:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/groupJobCreation'
+    licenseCreation:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/licenseCreation'
+    sqlStatementCreation:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/sqlStatementCreation'
+    sqlEngineCreation:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/sqlEngineCreation'
+    sqlStatementTemplateData:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/sqlStatementTemplateData'
+    sqlNotebookUpdate:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/sqlNotebookData'
+
+  responses:
+    clusterIdResponse:
+      description: 'Created cluster id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/clusterId'
+    clusterPageResponse:
+      description: 'Page of clusters matching specified filtering and paging criteria'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/clusterInfoPage'
+    clusterNamesResponse:
+      description: 'List of clusters names'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/clusterNames'
+    clusterResponse:
+      description: 'Created cluster'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/clusterInfoElements'
+    emptySuccessfulResponse:
+      description: 'Operation succeeded'
+    groupIdResponse:
+      description: 'Created group id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/groupId'
+    groupInfoPageResponse:
+      description: 'Page of groups matching specified filtering and paging criteria'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/groupInfoPage'
+    groupInfoResponse:
+      description: 'Group found by given id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/groupInfo'
+    groupJobInstanceIdResponse:
+      description: 'Submitted job instance id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/groupJobInstanceId'
+    groupJobInstanceInfoPageResponse:
+      description: 'Page of group job instance results matching specified filtering and paging criteria'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/groupJobInstanceInfoPage'
+    groupJobInstanceInfoResponse:
+      description: 'Information about interactive Spark job instance'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/groupJobInstanceInfo'
+    groupJobInstanceInfoStreamResponse:
+      description: 'Stream of all interactive Spark job result changes'
+      content:
+        text/event-stream:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/groupJobInstanceInfo'
+    scheduleIdResponse:
+      description: 'Created schedule id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/scheduleId'
+    scheduleInfoPageResponse:
+      description: 'Page of schedules matching specified filtering and paging criteria'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/scheduleInfoPage'
+    scheduleInfoResponse:
+      description: 'Schedule found by given id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/scheduleInfo'
+    jobIdResponse:
+      description: 'Started job id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/jobId'
+    jobInfoResponse:
+      description: 'Job found by given id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/jobInfo'
+    jobInfoPageResponse:
+      description: 'Page of jobs matching specified filtering and paging criteria'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/jobInfoPage'
+    jobInfoStreamResponse:
+      description: 'Stream of job change events'
+      content:
+        text/event-stream:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/jobInfo'
+    licenceInfoResponse:
+      description: 'Current license status'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/licenseInfo'
+    licenseExpiredException:
+      description: 'License Expired Exception returned when license is no longer active and none of the modify operations can be performed'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/licenseExpiredException'
+    notFoundException:
+      description: 'Not Found Exception'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/notFoundException'
+    validationException:
+      description: 'Validation Exception'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/validationException'
+    jobLogsResponse:
+      description: 'Logs of all job resources'
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/jobResourceLog'
+    sqlEngineListResponse:
+      description: 'SQL engines matching specified filtering criteria'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/sqlEngineList'
+    sqlEngineIdResponse:
+      description: 'Created SQL engine id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/sqlEngineId'
+    sqlStatementResponse:
+      description: 'SQL statement result'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/sqlStatementResult'
+    sqlStatementTemplatePageResponse:
+      description: 'Page of saved SQL statements matching specified paging criteria'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/sqlStatementTemplatePage'
+    sqlStatementTemplateResponse:
+      description: 'A saved SQL statement'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/sqlStatementTemplateData'
+    sqlQueryIdResponse:
+      description: 'Saved SQL statement id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/sqlSavedId'
+    sqlNotebookPageResponse:
+      description: 'Page of SQL notebooks'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/sqlNotebookPage'
+    sqlNotebookResponse:
+      description: 'SQL notebook found by given id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/sqlNotebook'
+    sqlNotebookIdResponse:
+      description: 'Created SQL notebook id'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/sqlNotebookId'
+
+  parameters:
+    clusterId:
+      name: clusterId
+      description: 'The unique identifier of a cluster'
+      in: path
+      required: true
+      schema:
+        type: string
+    groupKinds:
+      name: groupKinds
+      description: 'The list of group kinds to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/groupKind'
+    groupId:
+      name: groupId
+      description: 'The unique identifier of a group'
+      in: path
+      required: true
+      schema:
+        type: string
+    groupIds:
+      name: groupIds
+      description: 'The list of group ids to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+    groupName:
+      name: groupName
+      description: 'The unique name of a group'
+      in: path
+      required: true
+      schema:
+        type: string
+    groupNames:
+      name: groupNames
+      description: 'The list of group names to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+    groupStates:
+      name: groupStates
+      description: 'The list of group states to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/groupState'
+    scheduleId:
+      name: scheduleId
+      description: 'The unique identifier of a schedule'
+      in: path
+      required: true
+      schema:
+        type: string
+    scheduleIds:
+      name: scheduleIds
+      description: 'The list of schedule ids to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+    scheduleName:
+      name: scheduleName
+      description: 'The unique name of a schedule'
+      in: path
+      required: true
+      schema:
+        type: string
+    scheduleNames:
+      name: scheduleNames
+      description: 'The list of schedule names to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+    scheduleStates:
+      name: scheduleStates
+      description: 'The list of schedule states to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/scheduleState'
+        default:
+          - ENABLED
+    scheduleCrons:
+      name: scheduleCrons
+      description: 'The list of schedule crons to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+    jobId:
+      name: jobId
+      description: 'The unique identifier of a job'
+      in: path
+      required: true
+      schema:
+        type: string
+    jobIds:
+      name: jobIds
+      description: 'The list of job ids to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+    jobStates:
+      name: jobStates
+      description: 'The list of job states to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/jobState'
+        default:
+          - SUBMITTED
+          - STARTING
+          - READY
+          - BUSY
+    jobTypes:
+      name: jobTypes
+      description: 'The list of job types to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/jobType'
+    clusterNames:
+      name: clusterNames
+      description: 'The list of cluster names to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+    page:
+      name: page
+      description: 'The number of page to be returned'
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 0
+    scale:
+      name: scale
+      description: 'Number of instances to scale interactive Spark job to within group'
+      in: path
+      required: true
+      schema:
+        type: integer
+    search:
+      name: search
+      description: 'The word to apply for filtering'
+      in: query
+      required: false
+      schema:
+        type: string
+    size:
+      name: size
+      description: 'The size of page to be returned'
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 10
+    sort:
+      name: sort
+      description: 'The sort rules to be applied for define paging order'
+      explode: true
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          example: 'name,asc'
+    logSize:
+      name: logSize
+      description: 'Max number of log lines to return. The limit in the API is set to 25000 lines, you can change it by setting ilum.api.job.logs.maxLines parameter in the configuration file of ilum-core'
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int64
+        default: 100
+    from:
+      name: from
+      description: 'Offset from start of log'
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int64
+        default: 0
+    resourceName:
+      name: resourceName
+      description: 'The name of job resource'
+      in: path
+      required: true
+      schema:
+        type: string
+    tags:
+      name: tags
+      description: 'A semicolon separated list of tags to apply for filtering. Pattern: key1=value1;key2=value2'
+      in: query
+      required: false
+      schema:
+        type: string
+    sqlEngineId:
+      name: sqlEngineId
+      description: 'The unique identifier of a SQL engine'
+      in: path
+      required: true
+      schema:
+        type: string
+    sqlSavedId:
+      name: sqlSavedId
+      description: 'The unique identifier of a saved SQL statement'
+      in: path
+      required: true
+      schema:
+        type: string
+    sqlNotebookId:
+      name: sqlNotebookId
+      description: 'The unique identifier of an SQL notebook'
+      in: path
+      required: true
+      schema:
+        type: string
+    force:
+      name: force
+      description: 'Force delete flag'
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
+
+  schemas:
+    groupCreation:
+      type: object
+      required:
+        - name
+        - clusterName
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        kind:
+          type: string
+          enum:
+            - JOB
+            - CODE
+          default: JOB
+        tags:
+          description: 'A semicolon separated list of tags. Parameter key and value should be separated by an equal sign.'
+          type: string
+          default: key=value;key2=value2
+        language:
+          type: string
+          enum:
+            - SCALA
+            - PYTHON
+          default: SCALA
+        clusterName:
+          type: string
+          default: default
+        jars:
+          type: array
+          items:
+            type: string
+            format: binary
+        files:
+          type: array
+          items:
+            type: string
+            format: binary
+        pyFiles:
+          type: array
+          items:
+            type: string
+            format: binary
+        jobConfig:
+          description: 'A semicolon separated list of spark parameters to be applied for the Spark job. Parameter key and value should be separated by an equal sign.'
+          type: string
+          default: spark.key=value;spark.key2=value2
+        pyRequirements:
+          description: 'A semicolon separated list of python requirements. Package name and version (if given) should be separated by a double equal sign.'
+          type: string
+          example: pandas==2.0.0;numpy==1.0.0
+        packages:
+          type: string
+          description: 'Comma-separated list of Maven coordinates of jars to include on the driver and executor classpaths. The coordinates should be groupId:artifactId:version.'
+        scale:
+          description: 'Integer count of Spark jobs to be launched within this group'
+          type: string
+          default: 1
+        executors:
+          type: string
+          description: 'number of executors to run'
+        driverCores:
+          type: string
+          description: 'Number of cores to use for the driver process.'
+        executorCores:
+          type: string
+          description: 'The number of cores to use on each executor.'
+        driverMemory:
+          type: string
+          description: 'Amount of memory to use for the driver process, i.e. where SparkContext is initialized, in the same format as JVM memory strings with a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g).'
+        executorMemory:
+          type: string
+          description: 'Amount of memory to use per executor process, in the same format as JVM memory strings with a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g).'
+        dynamicAllocation:
+          type: string
+          default: 'false'
+          description: 'Whether to use dynamic resource allocation, which scales the number of executors registered with this application up and down based on the workload.'
+        initialExecutors:
+          type: string
+          description: 'Initial number of executors to run if dynamic allocation is enabled.'
+        minExecutors:
+          type: string
+          description: 'Upper bound for the number of executors if dynamic allocation is enabled.'
+        maxExecutors:
+          type: string
+          description: 'Lower bound for the number of executors if dynamic allocation is enabled.'
+        autoPause:
+          description: 'Boolean flag to enable auto-pause feature'
+          type: string
+          default: 'false'
+    groupUpdate:
+      type: object
+      properties:
+        description:
+          type: string
+        tags:
+          description: 'A semicolon separated list of tags. Parameter key and value should be separated by an equal sign.'
+          type: string
+          example: key=value;key2=value2
+        jobConfig:
+          description: 'A semicolon separated list of spark parameters to be applied for the Spark job. Parameter key and value should be separated by an equal sign.'
+          type: string
+          example: spark.key=value;spark.key2=value2
+        pyRequirements:
+          description: 'A semicolon separated list of python requirements. Package name and version (if given) should be separated by a double equal sign.'
+          type: string
+          example: pandas==2.0.0;numpy==1.0.0
+        packages:
+          type: string
+          description: 'Comma-separated list of Maven coordinates of jars to include on the driver and executor classpaths. The coordinates should be groupId:artifactId:version.'
+        scale:
+          description: 'Integer count of Spark jobs to be launched within this group'
+          type: string
+          example: 1
+        executors:
+          type: string
+          description: 'number of executors to run'
+        driverCores:
+          type: string
+          description: 'Number of cores to use for the driver process.'
+        executorCores:
+          type: string
+          description: 'The number of cores to use on each executor.'
+        driverMemory:
+          type: string
+          description: 'Amount of memory to use for the driver process, i.e. where SparkContext is initialized, in the same format as JVM memory strings with a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g).'
+        executorMemory:
+          type: string
+          description: 'Amount of memory to use per executor process, in the same format as JVM memory strings with a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g).'
+        dynamicAllocation:
+          type: string
+          default: 'false'
+          description: 'Whether to use dynamic resource allocation, which scales the number of executors registered with this application up and down based on the workload.'
+        initialExecutors:
+          type: string
+          description: 'Initial number of executors to run if dynamic allocation is enabled.'
+        minExecutors:
+          type: string
+          description: 'Upper bound for the number of executors if dynamic allocation is enabled.'
+        maxExecutors:
+          type: string
+          description: 'Lower bound for the number of executors if dynamic allocation is enabled.'
+        autoPause:
+          description: 'Boolean flag to enable auto-pause feature'
+          type: string
+          default: 'false'
+    groupId:
+      type: object
+      properties:
+        groupId:
+          type: string
+    groupInfo:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        kind:
+          type: string
+        tags:
+          type: string
+          additionalProperties:
+            type: string
+        language:
+          type: string
+        clusterName:
+          type: string
+        state:
+          type: string
+        scale:
+          type: integer
+        jobConfig:
+          type: object
+          additionalProperties: true
+        pyRequirements:
+          type: string
+        packages:
+          type: string
+        createdTime:
+          type: integer
+          format: int64
+        archivedTime:
+          type: integer
+          format: int64
+        memorySettings:
+          $ref: '#/components/schemas/memorySettings'
+        autoPause:
+          type: boolean
+        jobs:
+          $ref: '#/components/schemas/jobInfoList'
+    memorySettings:
+        type: object
+        properties:
+          executors:
+            type: integer
+          driverCores:
+            type: integer
+          executorCores:
+            type: integer
+          driverMemory:
+            type: string
+          executorMemory:
+            type: string
+          dynamicAllocation:
+            type: boolean
+          initialExecutors:
+            type: integer
+          minExecutors:
+            type: integer
+          maxExecutors:
+            type: integer
+    memorySettingsCreation:
+      type: object
+      properties:
+        executors:
+          type: string
+          description: 'number of executors to run'
+        driverCores:
+          type: string
+          description: 'Number of cores to use for the driver process.'
+        executorCores:
+          type: string
+          description: 'The number of cores to use on each executor.'
+        driverMemory:
+          type: string
+          description: 'Amount of memory to use for the driver process, i.e. where SparkContext is initialized, in the same format as JVM memory strings with a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g).'
+        executorMemory:
+          type: string
+          description: 'Amount of memory to use per executor process, in the same format as JVM memory strings with a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g).'
+        dynamicAllocation:
+          type: string
+          default: 'false'
+          description: 'Whether to use dynamic resource allocation, which scales the number of executors registered with this application up and down based on the workload.'
+        initialExecutors:
+          type: string
+          description: 'Initial number of executors to run if dynamic allocation is enabled.'
+        minExecutors:
+          type: string
+          description: 'Upper bound for the number of executors if dynamic allocation is enabled.'
+        maxExecutors:
+          type: string
+          description: 'Lower bound for the number of executors if dynamic allocation is enabled.'
+    groupInfoPage:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/paged'
+        - $ref: '#/components/schemas/groupInfoPageElements'
+    groupInfoPageElements:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/groupInfo'
+    groupJobCreation:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/groupJobCreationTypeJobExecute'
+        - $ref: '#/components/schemas/groupJobCreationTypeCodeExecute'
+        - $ref: '#/components/schemas/groupJobCreationTypeCodeComplete'
+      discriminator:
+        propertyName: 'type'
+        mapping:
+          interactive_job_execute: '#/components/schemas/groupJobCreationTypeJobExecute'
+          interactive_code_execute: '#/components/schemas/groupJobCreationTypeCodeExecute'
+          interactive_code_complete: '#/components/schemas/groupJobCreationTypeCodeComplete'
+    groupJobCreationTypeJobExecute:
+      type: object
+      required:
+        - type
+        - jobClass
+        - jobConfig
+      properties:
+        type:
+          type: string
+          default: 'interactive_job_execute'
+        jobClass:
+          type: string
+        jobConfig:
+          type: object
+          additionalProperties: true
+    groupJobCreationTypeCodeExecute:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+          default: 'interactive_code_execute'
+        code:
+          type: string
+    groupJobCreationTypeCodeComplete:
+      type: object
+      required:
+        - type
+        - code
+        - cursor
+      properties:
+        type:
+          type: string
+          default: 'interactive_code_complete'
+        code:
+          type: string
+        cursor:
+          type: integer
+    groupJobInstanceInfo:
+      type: object
+      properties:
+        jobInstanceId:
+          type: string
+        jobId:
+          type: string
+        groupId:
+          type: string
+        startTime:
+          type: integer
+          format: int64
+        endTime:
+          type: integer
+          format: int64
+        jobClass:
+          type: string
+        jobConfig:
+          type: object
+          additionalProperties: true
+        result:
+          type: string
+        error:
+          $ref: '#/components/schemas/groupJobInstanceError'
+    groupJobInstanceError:
+      type: object
+      properties:
+        message:
+          type: string
+        stackTrace:
+          type: string
+    groupJobInstanceId:
+      type: object
+      properties:
+        jobInstanceId:
+          type: string
+    groupJobInstanceInfoPage:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/paged'
+        - $ref: '#/components/schemas/groupJobInstanceInfoPageElements'
+    groupJobInstanceInfoPageElements:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/groupJobInstanceInfo'
+    groupKind:
+      type: string
+      enum:
+        - JOB
+        - CODE
+      default: JOB
+    groupState:
+      type: string
+      enum:
+        - ACTIVE
+        - ARCHIVED
+    scheduleCreation:
+      type: object
+      required:
+        - name
+        - clusterName
+        - cron
+        - jobClass
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        cron:
+          type: string
+        tags:
+          description: 'A semicolon separated list of tags. Parameter key and value should be separated by an equal sign.'
+          type: string
+          default: key=value;key2=value2
+        language:
+          type: string
+          enum:
+            - SCALA
+            - PYTHON
+          default: SCALA
+        clusterName:
+          type: string
+          default: default
+        jars:
+          type: array
+          items:
+            type: string
+            format: binary
+        files:
+          type: array
+          items:
+            type: string
+            format: binary
+        pyFiles:
+          type: array
+          items:
+            type: string
+            format: binary
+        jobConfig:
+          description: 'A semicolon separated list of spark parameters to be applied for the Spark job. Parameter key and value should be separated by an equal sign.'
+          type: string
+          default: spark.key=value;spark.key2=value2
+        jobClass:
+          type: string
+        args:
+          description: 'list of spark arguments to be applied for the Spark job.'
+          type: string
+        pyRequirements:
+          description: 'A semicolon separated list of python requirements. Package name and version (if given) should be separated by a double equal sign.'
+          type: string
+          example: pandas==2.0.0;numpy==1.0.0
+        packages:
+          type: string
+          description: 'Comma-separated list of Maven coordinates of jars to include on the driver and executor classpaths. The coordinates should be groupId:artifactId:version.'
+        startTime:
+          description: 'The time when the schedule will start in epoch milliseconds (e.g. 1727733600000, which means 01.10.2024). If not provided, the schedule will start immediately.'
+          type: string
+        endTime:
+          description: 'The time when the schedule will be suspended in epoch milliseconds (e.g. 1727820000000, which means 02.10.2024). If not provided, the schedule will create jobs until schedule disabling.'
+          type: string
+        maxRetries:
+          description: 'Max number of retries to be performed if the job fails'
+          type: string
+          default: 0
+        executors:
+          type: string
+          description: 'number of executors to run'
+        driverCores:
+          type: string
+          description: 'Number of cores to use for the driver process.'
+        executorCores:
+          type: string
+          description: 'The number of cores to use on each executor.'
+        driverMemory:
+          type: string
+          description: 'Amount of memory to use for the driver process, i.e. where SparkContext is initialized, in the same format as JVM memory strings with a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g).'
+        executorMemory:
+          type: string
+          description: 'Amount of memory to use per executor process, in the same format as JVM memory strings with a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g).'
+        dynamicAllocation:
+          type: string
+          default: 'false'
+          description: 'Whether to use dynamic resource allocation, which scales the number of executors registered with this application up and down based on the workload.'
+        initialExecutors:
+          type: string
+          description: 'Initial number of executors to run if dynamic allocation is enabled.'
+        minExecutors:
+          type: string
+          description: 'Upper bound for the number of executors if dynamic allocation is enabled.'
+        maxExecutors:
+          type: string
+          description: 'Lower bound for the number of executors if dynamic allocation is enabled.'
+    scheduleId:
+      type: object
+      properties:
+        scheduleId:
+          type: string
+    scheduleInfo:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        cron:
+          type: string
+        tags:
+          type: string
+          additionalProperties:
+            type: string
+        language:
+          type: string
+        clusterName:
+          type: string
+        jobConfig:
+          type: object
+          additionalProperties: true
+        pyRequirements:
+          type: string
+        packages:
+          type: string
+        state:
+          type: string
+        jobClass:
+          type: string
+        args:
+          type: array
+          items:
+            type: string
+        startTime:
+          type: integer
+          format: int64
+        endTime:
+          type: integer
+          format: int64
+        maxRetries:
+          type: integer
+        createdTime:
+          type: integer
+          format: int64
+        disabledTime:
+          type: integer
+          format: int64
+        memorySettings:
+          $ref: '#/components/schemas/memorySettings'
+        jobs:
+          $ref: '#/components/schemas/jobInfoList'
+    scheduleInfoPage:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/paged'
+        - $ref: '#/components/schemas/scheduleInfoPageElements'
+    scheduleInfoPageElements:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/scheduleInfo'
+    scheduleState:
+      type: string
+      enum:
+        - ENABLED
+        - DISABLED
+        - PAUSED
+    scheduleUpdate:
+      type: object
+      properties:
+        description:
+          type: string
+        tags:
+          description: 'A semicolon separated list of tags. Parameter key and value should be separated by an equal sign.'
+          type: string
+          example: key=value;key2=value2
+        jobConfig:
+          description: 'A semicolon separated list of spark parameters to be applied for the Spark job. Parameter key and value should be separated by an equal sign.'
+          type: string
+          example: spark.key=value;spark.key2=value2
+        cron:
+          description: 'Cron expression to be applied for the schedule'
+          type: string
+        args:
+          description: 'A semicolon separated list of spark arguments to be applied for the Spark job.'
+          type: string
+        jobClass:
+          type: string
+        pyRequirements:
+          description: 'A semicolon separated list of python requirements. Package name and version (if given) should be separated by a double equal sign.'
+          type: string
+          example: pandas==2.0.0;numpy==1.0.0
+        packages:
+          type: string
+          description: 'Comma-separated list of Maven coordinates of jars to include on the driver and executor classpaths. The coordinates should be groupId:artifactId:version.'
+        startTime:
+          description: 'The time when the schedule will start in epoch milliseconds (e.g. 1727733600000, which means 01.10.2024). If not provided, the schedule will start immediately.'
+          type: string
+        endTime:
+          description: 'The time when the schedule will be suspended in epoch milliseconds (e.g. 1727820000000, which means 02.10.2024). If not provided, the schedule will create jobs until schedule disabling.'
+          type: string
+        maxRetries:
+          description: 'Max number of retries to be performed if the job fails'
+          type: string
+        executors:
+          type: string
+          description: 'number of executors to run'
+        driverCores:
+          type: string
+          description: 'Number of cores to use for the driver process.'
+        executorCores:
+          type: string
+          description: 'The number of cores to use on each executor.'
+        driverMemory:
+          type: string
+          description: 'Amount of memory to use for the driver process, i.e. where SparkContext is initialized, in the same format as JVM memory strings with a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g).'
+        executorMemory:
+          type: string
+          description: 'Amount of memory to use per executor process, in the same format as JVM memory strings with a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g).'
+        dynamicAllocation:
+          type: string
+          default: 'false'
+          description: 'Whether to use dynamic resource allocation, which scales the number of executors registered with this application up and down based on the workload.'
+        initialExecutors:
+          type: string
+          description: 'Initial number of executors to run if dynamic allocation is enabled.'
+        minExecutors:
+          type: string
+          description: 'Upper bound for the number of executors if dynamic allocation is enabled.'
+        maxExecutors:
+          type: string
+          description: 'Lower bound for the number of executors if dynamic allocation is enabled.'
+    jobCreation:
+      type: object
+      required:
+        - name
+        - clusterName
+      properties:
+        name:
+          type: string
+        tags:
+          description: 'A semicolon separated list of tags. Parameter key and value should be separated by an equal sign.'
+          type: string
+          default: key=value;key2=value2
+        language:
+          type: string
+          enum:
+            - SCALA
+            - PYTHON
+          default: SCALA
+        clusterName:
+          type: string
+          default: default
+        jobClass:
+          type: string
+        jars:
+          type: array
+          items:
+            type: string
+            format: binary
+        files:
+          type: array
+          items:
+            type: string
+            format: binary
+        pyFiles:
+          type: array
+          items:
+            type: string
+            format: binary
+        jobConfig:
+          description: 'A semicolon separated list of spark parameters to be applied for the Spark job. Parameter key and value should be separated by an equal sign.'
+          type: string
+          default: spark.key=value;spark.key2=value2
+        pyRequirements:
+          description: 'A semicolon separated list of python requirements. Package name and version (if given) should be separated by a double equal sign.'
+          type: string
+          example: pandas==2.0.0;numpy==1.0.0
+        packages:
+          type: string
+          description: 'Comma-separated list of Maven coordinates of jars to include on the driver and executor classpaths. The coordinates should be groupId:artifactId:version.'
+        args:
+          description: 'A semicolon separated list of spark arguments to be applied for the Spark job.'
+          type: string
+        maxRetries:
+          description: 'Max number of retries to be performed if the job fails'
+          type: string
+          default: 0
+        executors:
+          type: string
+          description: 'number of executors to run'
+        driverCores:
+          type: string
+          description: 'Number of cores to use for the driver process.'
+        executorCores:
+          type: string
+          description: 'The number of cores to use on each executor.'
+        driverMemory:
+          type: string
+          description: 'Amount of memory to use for the driver process, i.e. where SparkContext is initialized, in the same format as JVM memory strings with a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g).'
+        executorMemory:
+          type: string
+          description: 'Amount of memory to use per executor process, in the same format as JVM memory strings with a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g).'
+        dynamicAllocation:
+          type: string
+          default: 'false'
+          description: 'Whether to use dynamic resource allocation, which scales the number of executors registered with this application up and down based on the workload.'
+        initialExecutors:
+          type: string
+          description: 'Initial number of executors to run if dynamic allocation is enabled.'
+        minExecutors:
+          type: string
+          description: 'Upper bound for the number of executors if dynamic allocation is enabled.'
+        maxExecutors:
+          type: string
+          description: 'Lower bound for the number of executors if dynamic allocation is enabled.'
+    jobId:
+      type: object
+      properties:
+        jobId:
+          type: string
+    jobInfo:
+      type: object
+      properties:
+        jobId:
+          type: string
+        groupId:
+          type: string
+        scheduleId:
+          type: string
+        jobName:
+          type: string
+        jobType:
+          type: string
+        tags:
+          type: string
+          additionalProperties:
+            type: string
+        language:
+          type: string
+        jobClass:
+          type: string
+        clusterName:
+          type: string
+        jobConfig:
+          type: string
+          additionalProperties:
+            type: string
+        args:
+          type: array
+          items:
+            type: string
+        pyRequirements:
+          type: string
+        packages:
+          type: string
+        appId:
+          type: string
+        state:
+          type: string
+        error:
+          type: string
+        submitTime:
+          type: integer
+          format: int64
+        startTime:
+          type: integer
+          format: int64
+        endTime:
+          type: integer
+          format: int64
+        maxRetries:
+          type: integer
+        attempt:
+          type: integer
+        memorySettings:
+          $ref: '#/components/schemas/memorySettings'
+    jobInfoList:
+      type: array
+      items:
+        $ref: '#/components/schemas/jobInfo'
+    jobInfoPage:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/paged'
+        - $ref: '#/components/schemas/jobInfoPageElements'
+    jobInfoPageElements:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/jobInfo'
+    jobState:
+      type: string
+      enum:
+        - SUBMITTED
+        - STARTING
+        - READY
+        - BUSY
+        - FAILED
+        - FINISHED
+        - CANCELED
+        - UNKNOWN
+    jobType:
+      type: string
+      enum:
+        - SINGLE
+        - INTERACTIVE
+        - SHELL
+    clusterId:
+      type: object
+      properties:
+        clusterId:
+          type: string
+    clusterInfoPage:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/paged'
+        - $ref: '#/components/schemas/clusterInfoPageElements'
+    clusterInfoPageElements:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/clusterInfoPageElementsItem'
+    clusterInfoPageElementsItem:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/kubernetesClusterInfo'
+        - $ref: '#/components/schemas/localClusterInfo'
+        - $ref: '#/components/schemas/yarnClusterInfo'
+      discriminator:
+        propertyName: 'type'
+        mapping:
+          k8s: '#/components/schemas/kubernetesClusterInfo'
+          local: '#/components/schemas/localClusterInfo'
+          yarn: '#/components/schemas/yarnClusterInfo'
+    clusterNames:
+      type: object
+      properties:
+        names:
+          type: array
+          items:
+            type: string
+    cluster:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        storages:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/clusterStorageInfo'
+        sparkStorage:
+          type: string
+        metastoreName:
+          type: string
+        memorySettings:
+          $ref: '#/components/schemas/memorySettingsCreation'
+        defaultApplicationConfig:
+          type: string
+          additionalProperties:
+            type: string
+    kubernetesCluster:
+      allOf:
+        - $ref: '#/components/schemas/cluster'
+        - $ref: '#/components/schemas/kubernetesClusterPart'
+    kubernetesClusterPart:
+      type: object
+      required:
+        - type
+        - name
+        - url
+      properties:
+        type:
+          type: string
+          default: 'k8s'
+        defaultApplicationConfig:
+          type: string
+          additionalProperties:
+            type: string
+        sparkStorage:
+          type: string
+          default: 's3'
+        url:
+          type: string
+        caCert:
+          type: string
+        clientCert:
+          type: string
+        clientKey:
+          type: string
+        clientKeyAlgorithm:
+          type: string
+        clientKeyPassphrase:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+        resourceQuota:
+          $ref: '#/components/schemas/clusterResourceQuota'
+        limitRange:
+          $ref: '#/components/schemas/clusterLimitRange'
+
+    localCluster:
+      allOf:
+        - $ref: '#/components/schemas/cluster'
+        - $ref: '#/components/schemas/localClusterPart'
+    localClusterPart:
+      type: object
+      required:
+        - type
+        - name
+        - threads
+      properties:
+        type:
+          type: string
+          default: 'local'
+        sparkStorage:
+          type: string
+          default: 'local'
+        threads:
+          type: integer
+    yarnCluster:
+      allOf:
+        - $ref: '#/components/schemas/cluster'
+        - $ref: '#/components/schemas/yarnClusterPart'
+    yarnClusterPart:
+      type: object
+      required:
+        - type
+        - name
+      properties:
+        type:
+          type: string
+          default: 'yarn'
+        defaultApplicationConfig:
+          type: string
+          additionalProperties:
+            type: string
+        sparkStorage:
+          type: string
+          default: 'hdfs'
+        hadoopUsername:
+          type: string
+          deprecated: true
+        configurationFiles:
+          type: string
+          deprecated: true
+          additionalProperties:
+            type: string
+        keyTab:
+          type: string
+          deprecated: true
+        principal:
+          type: string
+          deprecated: true
+        krb5:
+          type: string
+          deprecated: true
+        trustStore:
+          type: string
+          deprecated: true
+    clusterInfo:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        sparkMaster:
+          type: string
+        sparkDeployMode:
+          type: string
+        sparkStorage:
+          type: string
+        metastoreName:
+          type: string
+        storages:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/clusterStorageInfo'
+        memorySettings:
+          $ref: '#/components/schemas/memorySettings'
+        defaultApplicationConfig:
+          type: string
+          additionalProperties:
+            type: string
+    kubernetesClusterInfo:
+      allOf:
+        - $ref: '#/components/schemas/clusterInfo'
+        - $ref: '#/components/schemas/kubernetesClusterInfoPart'
+    kubernetesClusterInfoPart:
+      type: object
+      required:
+        - type
+        - name
+        - url
+      properties:
+        type:
+          type: string
+          default: 'k8s'
+        defaultApplicationConfig:
+          type: string
+          additionalProperties:
+            type: string
+        url:
+          type: string
+        caCert:
+          type: string
+        clientCert:
+          type: string
+        clientKey:
+          type: string
+        clientKeyAlgorithm:
+          type: string
+        clientKeyPassphrase:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+        resourceQuota:
+          $ref: '#/components/schemas/clusterResourceQuota'
+        limitRange:
+          $ref: '#/components/schemas/clusterLimitRange'
+    localClusterInfo:
+      allOf:
+        - $ref: '#/components/schemas/clusterInfo'
+        - $ref: '#/components/schemas/localClusterInfoPart'
+    localClusterInfoPart:
+      type: object
+      required:
+        - type
+        - name
+        - threads
+      properties:
+        type:
+          type: string
+          default: 'local'
+        threads:
+          type: integer
+    yarnClusterInfo:
+      allOf:
+        - $ref: '#/components/schemas/clusterInfo'
+        - $ref: '#/components/schemas/yarnClusterInfoPart'
+    yarnClusterInfoPart:
+      type: object
+      required:
+        - type
+        - name
+      properties:
+        type:
+          type: string
+          default: 'yarn'
+        defaultApplicationConfig:
+          type: string
+          additionalProperties:
+            type: string
+        hadoopUsername:
+          type: string
+          deprecated: true
+        configurationFiles:
+          type: string
+          deprecated: true
+          additionalProperties:
+            type: string
+        additionalProperties:
+          type: string
+          deprecated: true
+        keyTab:
+          type: string
+          deprecated: true
+        principal:
+          type: string
+          deprecated: true
+        krb5:
+          type: string
+          deprecated: true
+        trustStore:
+          type: string
+          deprecated: true
+    clusterInfoElements:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/kubernetesClusterInfo'
+        - $ref: '#/components/schemas/localClusterInfo'
+        - $ref: '#/components/schemas/yarnClusterInfo'
+      discriminator:
+        propertyName: 'type'
+        mapping:
+          k8s: '#/components/schemas/kubernetesClusterInfo'
+          local: '#/components/schemas/localClusterInfo'
+          yarn: '#/components/schemas/yarnClusterInfo'
+    clusterStorageInfo:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/s3StorageInfo'
+        - $ref: '#/components/schemas/gcsStorageInfo'
+        - $ref: '#/components/schemas/wasbsStorageInfo'
+        - $ref: '#/components/schemas/hdfsStorageInfo'
+      discriminator:
+        propertyName: 'type'
+        mapping:
+          s3: '#/components/schemas/s3StorageInfo'
+          gcs: '#/components/schemas/gcsStorageInfo'
+          wasbs: '#/components/schemas/wasbsStorageInfo'
+          hdfs: '#/components/schemas/hdfsStorageInfo'
+    s3StorageInfo:
+      allOf:
+        - $ref: '#/components/schemas/storageInfo'
+        - $ref: '#/components/schemas/s3StorageInfoPart'
+    gcsStorageInfo:
+      allOf:
+        - $ref: '#/components/schemas/storageInfo'
+        - $ref: '#/components/schemas/gcsStorageInfoPart'
+    wasbsStorageInfo:
+      allOf:
+        - $ref: '#/components/schemas/storageInfo'
+        - $ref: '#/components/schemas/wasbsStorageInfoPart'
+    hdfsStorageInfo:
+      allOf:
+        - $ref: '#/components/schemas/storageInfo'
+        - $ref: '#/components/schemas/hdfsStorageInfoPart'
+    storageInfo:
+      type: object
+      properties:
+        sparkBucket:
+          type: string
+        dataBucket:
+          type: string
+        extraBuckets:
+          type: array
+          items:
+            type: string
+    s3StorageInfoPart:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          default: 's3'
+        endpoint:
+          type: string
+        region:
+          type: string
+          default: 'us-east-1'
+        accessKey:
+          type: string
+        secretKey:
+          type: string
+    gcsStorageInfoPart:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          default: 'gcs'
+        clientEmail:
+          type: string
+        privateKey:
+          type: string
+        privateKeyId:
+          type: string
+    wasbsStorageInfoPart:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          default: 'wasbs'
+        accountName:
+          type: string
+        accessKey:
+          type: string
+    hdfsStorageInfoPart:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          default: 'hdfs'
+        hadoopUsername:
+          type: string
+        configurationFiles:
+          type: string
+          additionalProperties:
+            type: string
+        keyTab:
+          type: string
+        principal:
+          type: string
+        krb5:
+          type: string
+        trustStore:
+          type: string
+    licenseCreation:
+      type: object
+      required:
+        - key
+      properties:
+        key:
+          type: string
+    licenseInfo:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: '#/components/schemas/licenseInfoStatus'
+        expire:
+          type: string
+    licenseInfoStatus:
+      type: string
+      enum:
+        - GREEN
+        - YELLOW
+        - RED
+    paged:
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/pageInfo'
+        sort:
+          $ref: '#/components/schemas/sort'
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+        first:
+          type: boolean
+        last:
+          type: boolean
+        empty:
+          type: boolean
+    pageInfo:
+      type: object
+      properties:
+        number:
+          type: integer
+        size:
+          type: integer
+        offset:
+          type: integer
+        paged:
+          type: boolean
+    sort:
+      type: array
+      items:
+        type: string
+    licenseExpiredException:
+      type: object
+      properties:
+        message:
+          type: string
+    notFoundException:
+      type: object
+      properties:
+        message:
+          type: string
+    validationException:
+      type: object
+      properties:
+        message:
+          type: string
+    jobResourceLog:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        role:
+          type: string
+        state:
+          type: string
+        from:
+          type: integer
+          format: int64
+        logSize:
+          type: integer
+          format: int64
+        fileName:
+          type: string
+        log:
+          type: array
+          items:
+            type: string
+    sqlEngineList:
+      type: array
+      items:
+        $ref: '#/components/schemas/sqlEngine'
+    sqlEngineId:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+    sqlEngine:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          $ref: '#/components/schemas/sqlEngineType'
+        state:
+          $ref: '#/components/schemas/sqlEngineState'
+    sqlEngineCreation:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          $ref: '#/components/schemas/sqlEngineType'
+        async:
+          type: boolean
+          default: false
+          description: 'If true, the request will return immediately, meaning that the engine may not be started yet'
+        force:
+          type: boolean
+          default: false
+          description: 'If true, when there is a starting engine, it will be stopped and a new one will be started'
+    sqlEngineType:
+      type: string
+      default: SPARK_SQL
+      enum:
+        - SPARK_SQL
+        - TRINO
+    sqlStatementCreation:
+      type: object
+      required:
+        - statement
+      properties:
+        statement:
+          type: string
+        clusterId:
+          type: string
+        maxRows:
+          type: integer
+          format: int64
+          default: 1000
+        engine:
+          $ref: '#/components/schemas/sqlEngineType'
+    sqlRow:
+      type: array
+      items:
+        type: object
+    sqlColumnDescription:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        index:
+          type: integer
+        precision:
+          type: integer
+        scale:
+          type: integer
+        comment:
+          type: string
+    sqlLogs:
+      type: array
+      items:
+        type: string
+    sqlOperationInfo:
+      type: object
+      properties:
+        state:
+          type: string
+        creationTime:
+          type: integer
+          format: int64
+        startTime:
+          type: integer
+          format: int64
+        completionTime:
+          type: integer
+          format: int64
+        exception:
+          type: string
+    sqlStatementResult:
+      type: object
+      properties:
+        info:
+          $ref: '#/components/schemas/sqlOperationInfo'
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/sqlColumnDescription'
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/sqlRow'
+        logs:
+          $ref: '#/components/schemas/sqlLogs'
+    sqlSavedId:
+      type: object
+      properties:
+        id:
+         type: string
+    sqlStatementTemplatePage:
+      allOf:
+        - $ref: '#/components/schemas/paged'
+        - $ref: '#/components/schemas/sqlStatementTemplatePageElements'
+    sqlStatementTemplatePageElements:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/sqlStatementTemplate'
+    sqlStatementTemplateId:
+      type: object
+      properties:
+        id:
+          type: string
+    sqlEngineState:
+      type: string
+      enum:
+        - RUNNING
+        - STARTING
+        - FAILED
+    sqlStatementTemplateData:
+      required:
+        - name
+        - statement
+      type: object
+      properties:
+        name:
+          type: string
+        statement:
+          type: string
+        engine:
+          $ref: '#/components/schemas/sqlEngineType'
+        maxRows:
+          type: integer
+          format: int64
+    sqlStatementTemplate:
+      required:
+        - id
+      allOf:
+        - $ref: '#/components/schemas/sqlStatementTemplateId'
+        - $ref: '#/components/schemas/sqlStatementTemplateData'
+    sqlNotebookData:
+      type: object
+      properties:
+        name:
+          type: string
+        statements:
+          type: array
+          items:
+            $ref: '#/components/schemas/sqlNotebookCell'
+    sqlNotebookCell:
+      type: object
+      properties:
+        id:
+          type: string
+        language:
+          $ref: '#/components/schemas/sqlNotebookCellType'
+        code:
+          type: string
+    sqlNotebookCellType:
+      type: string
+      enum:
+        - SQL
+        - MARKDOWN
+        - PYTHON
+        - SCALA
+    sqlNotebook:
+      allOf:
+        - $ref: '#/components/schemas/sqlNotebookId'
+        - $ref: '#/components/schemas/sqlNotebookData'
+    sqlNotebookPage:
+      allOf:
+        - $ref: '#/components/schemas/paged'
+        - $ref: '#/components/schemas/sqlNotebookPageElements'
+    sqlNotebookPageElements:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/sqlNotebook'
+    sqlNotebookId:
+      type: object
+      properties:
+        id:
+          type: string
+    namespaceCreation:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+    clusterResourceQuota:
+      type: object
+      properties:
+        limitsPod:
+          type: string
+        limitsCpu:
+          type: string
+        limitsMemory:
+          type: string
+        requestsCpu:
+          type: string
+        requestsMemory:
+          type: string
+    clusterLimitRange:
+      type: object
+      properties:
+        cpuLimitRange:
+          $ref: '#/components/schemas/resourceRange'
+        memoryLimitRange:
+          $ref: '#/components/schemas/resourceRange'
+    resourceRange:
+      type: object
+      properties:
+        defaultLimit:
+          type: string
+        defaultRequest:
+          type: string
+        minRequest:
+          type: string
+        maxLimit:
+          type: string
+        maxLimitRequestRatio:
+          type: string
