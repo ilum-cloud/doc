@@ -12,6 +12,10 @@
 > [!IMPORTANT]
 > The documentation was moved to [Ilum Official Doc](https://ilum.cloud/docs/)
 
+> 📚 **Official Ilum Course**: Go from first SQL to Spark microservices & dashboards fast.  
+[Start the Ilum Course →](https://ilumcourse.com?utm_source=github&utm_medium=readme&utm_campaign=ilum_course)
+
+
 ## 📖 Project
 
 > A fully manageable [Spark](https://github.com/apache/spark) cluster on [Kubernetes](https://github.com/kubernetes/kubernetes) with interactive sessions.
